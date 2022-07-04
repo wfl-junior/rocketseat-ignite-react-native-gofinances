@@ -26,3 +26,8 @@ export const Form = styled.View`
   width: 100%;
   padding: ${RFValue(24)}px;
 `;
+
+export const Fields = styled.View`
+  flex: 1;
+  width: 100%;
+`;
