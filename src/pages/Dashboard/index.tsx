@@ -1,5 +1,9 @@
+import { FlatList } from "react-native";
 import { HighlightCard } from "../../components/HighlightCard";
-import { TransactionCard } from "../../components/TransactionCard";
+import {
+  TransactionCard,
+  TransactionCardProps,
+} from "../../components/TransactionCard";
 import {
   Container,
   Header,
@@ -7,7 +11,6 @@ import {
   Icon,
   Photo,
   Title,
-  TransactionList,
   Transactions,
   User,
   UserGreeting,
@@ -16,9 +19,9 @@ import {
   UserWrapper,
 } from "./styles";
 
-const data = [
+const data: Array<TransactionCardProps & { id: string }> = [
   {
-    id: 1,
+    id: "1",
     type: "positive",
     title: "Desenvolvimento de site",
     amount: "R$ 12.000,00",
@@ -29,7 +32,7 @@ const data = [
     },
   },
   {
-    id: 2,
+    id: "2",
     type: "negative",
     title: "Hamburgueria Pizzy",
     amount: "R$ 59,00",
@@ -40,7 +43,7 @@ const data = [
     },
   },
   {
-    id: 3,
+    id: "3",
     type: "negative",
     title: "Aluguel do apartamento",
     amount: "R$ 1.200,00",
@@ -95,10 +98,10 @@ export const Dashboard: React.FC = () => (
     <Transactions>
       <Title>Listagem</Title>
 
-      <TransactionList
+      <FlatList
         data={data}
-        keyExtractor={(item: any) => item.id.toString()}
-        renderItem={({ item }: any) => <TransactionCard {...item} />}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => <TransactionCard {...item} />}
         showsVerticalScrollIndicator={false}
       />
     </Transactions>

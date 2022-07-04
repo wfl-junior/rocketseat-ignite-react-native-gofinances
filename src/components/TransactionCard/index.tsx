@@ -16,7 +16,7 @@ interface Category {
 
 export type TransactionCardType = "positive" | "negative";
 
-interface TransactionCardProps {
+export interface TransactionCardProps {
   type: TransactionCardType;
   title: string;
   amount: string;

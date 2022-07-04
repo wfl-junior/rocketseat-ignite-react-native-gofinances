@@ -79,5 +79,3 @@ export const Title = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   margin-bottom: ${RFValue(16)}px;
 `;
-
-export const TransactionList = styled.FlatList``;
