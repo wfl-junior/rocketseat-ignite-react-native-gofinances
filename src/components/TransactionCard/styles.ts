@@ -1,6 +1,11 @@
 import { Feather } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
+import { TransactionCardType } from ".";
+
+interface TypeProps {
+  type: TransactionCardType;
+}
 
 export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.shape};
@@ -14,10 +19,18 @@ export const Title = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
 `;
 
-export const Amount = styled.Text`
+export const Amount = styled.Text<TypeProps>`
   font-size: ${RFValue(20)}px;
   margin-top: ${RFValue(2)}px;
   font-family: ${({ theme }) => theme.fonts.regular};
+
+  color: ${({ type, theme }) => {
+    if (type === "negative") {
+      return theme.colors.attention;
+    }
+
+    return theme.colors.success;
+  }};
 `;
 
 export const Footer = styled.View`
