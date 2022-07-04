@@ -7,6 +7,7 @@ import {
   Icon,
   Photo,
   Title,
+  TransactionList,
   Transactions,
   User,
   UserGreeting,
@@ -14,6 +15,59 @@ import {
   UserName,
   UserWrapper,
 } from "./styles";
+
+const data = [
+  {
+    id: 1,
+    title: "Desenvolvimento de site",
+    amount: "R$ 12.000,00",
+    date: "13/04/2020",
+    category: {
+      name: "Vendas",
+      icon: "dollar-sign",
+    },
+  },
+  {
+    id: 2,
+    title: "Desenvolvimento de site",
+    amount: "R$ 12.000,00",
+    date: "13/04/2020",
+    category: {
+      name: "Vendas",
+      icon: "dollar-sign",
+    },
+  },
+  {
+    id: 3,
+    title: "Desenvolvimento de site",
+    amount: "R$ 12.000,00",
+    date: "13/04/2020",
+    category: {
+      name: "Vendas",
+      icon: "dollar-sign",
+    },
+  },
+  {
+    id: 4,
+    title: "Desenvolvimento de site",
+    amount: "R$ 12.000,00",
+    date: "13/04/2020",
+    category: {
+      name: "Vendas",
+      icon: "dollar-sign",
+    },
+  },
+  {
+    id: 5,
+    title: "Desenvolvimento de site",
+    amount: "R$ 12.000,00",
+    date: "13/04/2020",
+    category: {
+      name: "Vendas",
+      icon: "dollar-sign",
+    },
+  },
+];
 
 export const Dashboard: React.FC = () => (
   <Container>
@@ -58,7 +112,12 @@ export const Dashboard: React.FC = () => (
     <Transactions>
       <Title>Listagem</Title>
 
-      <TransactionCard />
+      <TransactionList
+        data={data}
+        keyExtractor={(item: any) => item.id.toString()}
+        renderItem={({ item }: any) => <TransactionCard {...item} />}
+        showsVerticalScrollIndicator={false}
+      />
     </Transactions>
   </Container>
 );
