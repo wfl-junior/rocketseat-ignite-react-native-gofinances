@@ -1,8 +1,9 @@
 import { Feather } from "@expo/vector-icons";
+import Constants from "expo-constants";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 
-export const Container = styled.SafeAreaView`
+export const Container = styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
 `;
@@ -14,7 +15,7 @@ export const Header = styled.View`
 `;
 
 export const UserWrapper = styled.View`
-  margin-top: ${RFValue(58)}px;
+  margin-top: ${RFValue(Constants.statusBarHeight)}px;
   width: 100%;
   padding: 0 ${RFValue(24)}px;
   flex-direction: row;
@@ -59,4 +60,8 @@ export const HighlightCards = styled.ScrollView.attrs({
     paddingLeft: RFValue(24),
     paddingRight: RFValue(8),
   },
-})``;
+})`
+  width: 100%;
+  position: absolute;
+  margin-top: ${RFPercentage(20)}px;
+`;

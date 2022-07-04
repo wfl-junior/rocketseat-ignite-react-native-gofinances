@@ -5,7 +5,8 @@ import {
 } from "@expo-google-fonts/poppins";
 import { loadAsync } from "expo-font";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
+import { StatusBar } from "react-native";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./global/styles/theme";
 import { Dashboard } from "./pages/Dashboard";
@@ -51,8 +52,16 @@ export const App: React.FC = () => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Dashboard onLayout={handleLayoutRootView} />
-    </ThemeProvider>
+    <Fragment>
+      <StatusBar
+        backgroundColor="transparent"
+        translucent
+        barStyle="light-content"
+      />
+
+      <ThemeProvider theme={theme}>
+        <Dashboard onLayout={handleLayoutRootView} />
+      </ThemeProvider>
+    </Fragment>
   );
 };
