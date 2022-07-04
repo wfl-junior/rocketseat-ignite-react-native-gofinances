@@ -13,7 +13,10 @@ export const theme = {
 
     shape: "#ffffff",
     title: "#363f5f",
+
     text: "#969cb2",
+    textDark: "#000000",
+
     background: "#f0f2f5",
   },
   fonts: {

@@ -2,6 +2,7 @@ import { HighlightCard } from "../../components/HighlightCard";
 import {
   Container,
   Header,
+  HighlightCards,
   Icon,
   Photo,
   User,
@@ -32,6 +33,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLayout }) => (
       </UserWrapper>
     </Header>
 
-    <HighlightCard />
+    <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
+      <HighlightCard />
+      <HighlightCard />
+      <HighlightCard />
+    </HighlightCards>
   </Container>
 );

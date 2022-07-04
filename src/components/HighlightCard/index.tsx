@@ -13,7 +13,7 @@ interface HighlightCardProps {}
 export const HighlightCard: React.FC<HighlightCardProps> = () => (
   <Container>
     <Header>
-      <Title>Entrada</Title>
+      <Title>Entradas</Title>
       <Icon name="arrow-up-circle" />
     </Header>
 
