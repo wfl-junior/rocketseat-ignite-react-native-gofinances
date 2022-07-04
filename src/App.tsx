@@ -6,7 +6,7 @@ import {
 import { loadAsync } from "expo-font";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, View } from "react-native";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./global/styles/theme";
 import { Dashboard } from "./pages/Dashboard";
@@ -60,7 +60,9 @@ export const App: React.FC = () => {
       />
 
       <ThemeProvider theme={theme}>
-        <Dashboard onLayout={handleLayoutRootView} />
+        <View style={{ flex: 1 }} onLayout={handleLayoutRootView}>
+          <Dashboard />
+        </View>
       </ThemeProvider>
     </Fragment>
   );

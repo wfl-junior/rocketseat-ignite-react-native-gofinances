@@ -1,10 +1,13 @@
 import { HighlightCard } from "../../components/HighlightCard";
+import { TransactionCard } from "../../components/TransactionCard";
 import {
   Container,
   Header,
   HighlightCards,
   Icon,
   Photo,
+  Title,
+  Transactions,
   User,
   UserGreeting,
   UserInfo,
@@ -12,12 +15,8 @@ import {
   UserWrapper,
 } from "./styles";
 
-interface DashboardProps {
-  onLayout?: () => void;
-}
-
-export const Dashboard: React.FC<DashboardProps> = ({ onLayout }) => (
-  <Container onLayout={onLayout}>
+export const Dashboard: React.FC = () => (
+  <Container>
     <Header>
       <UserWrapper>
         <UserInfo>
@@ -55,5 +54,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLayout }) => (
         type="total"
       />
     </HighlightCards>
+
+    <Transactions>
+      <Title>Listagem</Title>
+
+      <TransactionCard />
+    </Transactions>
   </Container>
 );
