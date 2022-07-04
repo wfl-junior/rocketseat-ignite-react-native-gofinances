@@ -1,6 +1,7 @@
 import {
   Container,
   Header,
+  Icon,
   Photo,
   User,
   UserGreeting,
@@ -25,6 +26,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLayout }) => (
             <UserName>Wallace Júnior</UserName>
           </User>
         </UserInfo>
+
+        <Icon name="power" />
       </UserWrapper>
     </Header>
   </Container>
