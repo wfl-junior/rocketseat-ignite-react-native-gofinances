@@ -1,3 +1,4 @@
+import { HighlightCard } from "../../components/HighlightCard";
 import {
   Container,
   Header,
@@ -30,5 +31,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLayout }) => (
         <Icon name="power" />
       </UserWrapper>
     </Header>
+
+    <HighlightCard />
   </Container>
 );
