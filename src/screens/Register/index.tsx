@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from "react-native";
 import * as yup from "yup";
@@ -11,6 +12,7 @@ import {
   TransactionTypeButton,
 } from "../../components/Form/TransactionTypeButton";
 import { categories } from "../../utils/categories";
+import { asyncStorageKeyPrefix } from "../../utils/constants";
 import { CategorySelect } from "../CategorySelect";
 import {
   Container,
@@ -40,6 +42,8 @@ const registerTransactionSchema = yup.object({
     .required("O preço é obrigatório"),
 });
 
+const transactionsKey = `${asyncStorageKeyPrefix}transactions`;
+
 export const Register: React.FC = () => {
   const {
     control,
@@ -53,7 +57,19 @@ export const Register: React.FC = () => {
   const [transactionType, setTransactionType] =
     useState<TransactionType | null>(null);
 
-  function handleRegister(values: RegisterFormData) {
+  useEffect(() => {
+    AsyncStorage.getItem(transactionsKey)
+      .then(data => {
+        if (data) {
+          return console.log(JSON.parse(data));
+        }
+
+        console.log("no data");
+      })
+      .catch(console.error);
+  }, []);
+
+  async function handleRegister(values: RegisterFormData) {
     if (!transactionType) {
       return Alert.alert("Erro", "Selecione o tipo da transação");
     }
@@ -62,11 +78,20 @@ export const Register: React.FC = () => {
       return Alert.alert("Erro", "Selecione uma categoria");
     }
 
-    console.log({
-      ...values,
-      transactionType,
-      category: category.slug,
-    });
+    try {
+      const data = {
+        ...values,
+        transactionType,
+        category: category.slug,
+      };
+
+      await AsyncStorage.setItem(transactionsKey, JSON.stringify(data));
+
+      Alert.alert("Sucesso", "Transação salva com sucesso");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Não foi possível salvar");
+    }
   }
 
   function handleCategorySelectButtonPress() {
