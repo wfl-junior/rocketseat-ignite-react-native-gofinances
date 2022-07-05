@@ -31,3 +31,9 @@ export const Fields = styled.View`
   flex: 1;
   width: 100%;
 `;
+
+export const TransactionTypeButtons = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;

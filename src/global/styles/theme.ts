@@ -6,10 +6,10 @@ export const theme = {
     secondaryLight: "rgba(255, 135, 44, 0.3)",
 
     success: "#12a454",
-    successLight: "rgba(18, 164, 84, 0.5)",
+    successLight: "rgba(18, 164, 84, 0.1)",
 
     attention: "#e83f5b",
-    attentionLight: "rgba(232, 63, 91, 0.5)",
+    attentionLight: "rgba(232, 63, 91, 0.1)",
 
     shape: "#ffffff",
     title: "#363f5f",
