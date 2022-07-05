@@ -85,6 +85,6 @@ export const LastTransaction = styled.Text<TypeProps>`
       return theme.colors.shape;
     }
 
-    return theme.colors.title;
+    return theme.colors.text;
   }};
 `;
