@@ -3,8 +3,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { theme } from "../global/styles/theme";
-import { Dashboard } from "../pages/Dashboard";
-import { Register } from "../pages/Register";
+import { Dashboard } from "../screens/Dashboard";
+import { Register } from "../screens/Register";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 

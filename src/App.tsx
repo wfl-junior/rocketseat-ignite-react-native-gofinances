@@ -7,7 +7,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { loadAsync } from "expo-font";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { StatusBar, View } from "react-native";
+import { StatusBar } from "react-native";
+import "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./global/styles/theme";
 import { AppRoutes } from "./routes/app.routes";
@@ -60,13 +62,16 @@ export const App: React.FC = () => {
         barStyle="light-content"
       />
 
-      <ThemeProvider theme={theme}>
-        <View style={{ flex: 1 }} onLayout={handleLayoutRootView}>
+      <GestureHandlerRootView
+        style={{ flex: 1 }}
+        onLayout={handleLayoutRootView}
+      >
+        <ThemeProvider theme={theme}>
           <NavigationContainer>
             <AppRoutes />
           </NavigationContainer>
-        </View>
-      </ThemeProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
     </Fragment>
   );
 };

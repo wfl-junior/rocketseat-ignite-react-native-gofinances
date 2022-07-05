@@ -1,7 +1,7 @@
-import { TouchableOpacityProps } from "react-native";
+import { RectButtonProps } from "react-native-gesture-handler";
 import { Category, Container, Icon } from "./styles";
 
-interface CategorySelectButtonProps extends TouchableOpacityProps {
+interface CategorySelectButtonProps extends RectButtonProps {
   title: string;
   activeCategoryName?: string;
 }
@@ -15,6 +15,7 @@ export const CategorySelectButton: React.FC<CategorySelectButtonProps> = ({
     <Category isActive={!!activeCategoryName}>
       {activeCategoryName ?? title}
     </Category>
+
     <Icon name="chevron-down" />
   </Container>
 );
