@@ -13,6 +13,7 @@ export const theme = {
 
     shape: "#ffffff",
     title: "#363f5f",
+    titleLight: "rgba(54, 63, 95, 0.6)",
 
     text: "#969cb2",
     textDark: "#000000",
