@@ -59,12 +59,12 @@ export const Register: React.FC = () => {
 
   useEffect(() => {
     AsyncStorage.getItem(transactionsKey)
-      .then(data => {
-        if (data) {
-          return console.log(JSON.parse(data));
+      .then(transactions => {
+        if (transactions) {
+          return console.log(JSON.parse(transactions));
         }
 
-        console.log("no data");
+        console.log("no transactions");
       })
       .catch(console.error);
   }, []);
@@ -79,17 +79,33 @@ export const Register: React.FC = () => {
     }
 
     try {
-      const data = {
+      const newTransaction = {
         ...values,
         transactionType,
         category: category.slug,
       };
 
-      await AsyncStorage.setItem(transactionsKey, JSON.stringify(data));
+      const existingTransactions = await AsyncStorage.getItem(transactionsKey);
+      const transactions = existingTransactions
+        ? JSON.parse(existingTransactions)
+        : [];
+
+      await AsyncStorage.setItem(
+        transactionsKey,
+        JSON.stringify([...transactions, newTransaction]),
+      );
 
       Alert.alert("Sucesso", "Transação salva com sucesso");
     } catch (error) {
-      console.error(error);
+      if (
+        error instanceof TypeError &&
+        error.message.toLowerCase().includes("invalid attempt to spread")
+      ) {
+        await AsyncStorage.removeItem(transactionsKey).catch(console.log);
+      } else {
+        console.log(error);
+      }
+
       Alert.alert("Não foi possível salvar");
     }
   }
