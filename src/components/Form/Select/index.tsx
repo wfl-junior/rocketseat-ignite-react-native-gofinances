@@ -1,10 +1,10 @@
 import { Category, Container, Icon } from "./styles";
 
-interface CategorySelectProps {
+interface SelectProps {
   title: string;
 }
 
-export const CategorySelect: React.FC<CategorySelectProps> = ({ title }) => (
+export const Select: React.FC<SelectProps> = ({ title }) => (
   <Container activeOpacity={0.7}>
     <Category>{title}</Category>
     <Icon name="chevron-down" />

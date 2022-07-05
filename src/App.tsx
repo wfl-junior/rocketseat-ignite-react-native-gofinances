@@ -9,7 +9,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { StatusBar, View } from "react-native";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./global/styles/theme";
-import { Register } from "./pages/Register";
+import { CategorySelect } from "./pages/CategorySelect";
 
 export const App: React.FC = () => {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -62,7 +62,8 @@ export const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <View style={{ flex: 1 }} onLayout={handleLayoutRootView}>
           {/* <Dashboard /> */}
-          <Register />
+          {/* <Register /> */}
+          <CategorySelect />
         </View>
       </ThemeProvider>
     </Fragment>
