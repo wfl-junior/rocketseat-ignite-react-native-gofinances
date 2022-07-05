@@ -13,31 +13,46 @@ import {
 } from "./styles";
 
 interface CategorySelectProps {
-  category: string;
+  activeCategorySlug?: string;
+  onSelect: (category: string) => void;
+  onClose: () => void;
 }
 
-export const CategorySelect: React.FC<CategorySelectProps> = () => (
-  <Container>
-    <Header>
-      <Title>Categoria</Title>
-    </Header>
+export const CategorySelect: React.FC<CategorySelectProps> = ({
+  activeCategorySlug,
+  onSelect,
+  onClose,
+}) => {
+  function handleSelect() {
+    onClose();
+  }
 
-    <FlatList
-      data={categories}
-      style={{ flex: 1, width: "100%" }}
-      keyExtractor={category => category.slug}
-      ItemSeparatorComponent={() => <Separator />}
-      renderItem={({ item: category }) => (
-        <Category>
-          <Icon name={category.icon} />
+  return (
+    <Container>
+      <Header>
+        <Title>Categoria</Title>
+      </Header>
 
-          <Name>{category.name}</Name>
-        </Category>
-      )}
-    />
+      <FlatList
+        data={categories}
+        style={{ flex: 1, width: "100%" }}
+        keyExtractor={category => category.slug}
+        ItemSeparatorComponent={() => <Separator />}
+        renderItem={({ item: category }) => (
+          <Category
+            onPress={() => onSelect(category.slug)}
+            isActive={category.slug === activeCategorySlug}
+          >
+            <Icon name={category.icon} />
 
-    <Footer>
-      <Button title="Selecionar" />
-    </Footer>
-  </Container>
-);
+            <Name>{category.name}</Name>
+          </Category>
+        )}
+      />
+
+      <Footer>
+        <Button title="Selecionar" onPress={handleSelect} />
+      </Footer>
+    </Container>
+  );
+};

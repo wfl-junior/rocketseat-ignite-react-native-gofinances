@@ -12,10 +12,21 @@ export const Container = styled(TouchableOpacity)`
   border-radius: 5px;
 `;
 
-export const Category = styled.Text`
-  color: ${({ theme }) => theme.colors.text};
+interface CategoryProps {
+  isActive: boolean;
+}
+
+export const Category = styled.Text<CategoryProps>`
   font-size: ${RFValue(14)}px;
   font-family: ${({ theme }) => theme.fonts.regular};
+
+  color: ${({ isActive, theme }) => {
+    if (isActive) {
+      return theme.colors.textDark;
+    }
+
+    return theme.colors.text;
+  }};
 `;
 
 export const Icon = styled(Feather as any)`
