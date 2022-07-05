@@ -3,13 +3,14 @@ import {
   Poppins_500Medium,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+import { NavigationContainer } from "@react-navigation/native";
 import { loadAsync } from "expo-font";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { StatusBar, View } from "react-native";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./global/styles/theme";
-import { Register } from "./pages/Register";
+import { AppRoutes } from "./routes/app.routes";
 
 export const App: React.FC = () => {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -61,8 +62,9 @@ export const App: React.FC = () => {
 
       <ThemeProvider theme={theme}>
         <View style={{ flex: 1 }} onLayout={handleLayoutRootView}>
-          {/* <Dashboard /> */}
-          <Register />
+          <NavigationContainer>
+            <AppRoutes />
+          </NavigationContainer>
         </View>
       </ThemeProvider>
     </Fragment>
