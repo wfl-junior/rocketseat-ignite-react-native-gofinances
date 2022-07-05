@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { FlatList } from "react-native";
 import { HighlightCard } from "../../components/HighlightCard";
 import {
@@ -33,16 +34,19 @@ interface Transaction extends TransactionCardProps {
 export const Dashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  useEffect(() => {
+  const fetchTransactions = useCallback(() => {
     AsyncStorage.getItem(transactionsKey)
       .then(data => {
         if (data) {
-          const transactions: Array<Transaction & { categorySlug: string }> =
-            JSON.parse(data);
+          const transactions: Array<
+            Omit<Transaction, "category"> & { categorySlug: string }
+          > = JSON.parse(data);
 
           setTransactions(
             transactions.map(transaction => ({
-              ...transaction,
+              id: transaction.id,
+              title: transaction.title,
+              type: transaction.type,
               amount: formatAmount(Number(transaction.amount)),
               date: formatDate(transaction.date),
               category: categories.find(
@@ -54,6 +58,8 @@ export const Dashboard: React.FC = () => {
       })
       .catch(console.log);
   }, []);
+
+  useFocusEffect(fetchTransactions);
 
   return (
     <Container>
