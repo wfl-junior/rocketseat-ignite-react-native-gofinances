@@ -40,6 +40,8 @@ export const Category = styled(RectButton as any)<CategoryProps>`
     if (isActive) {
       return theme.colors.secondaryLight;
     }
+
+    return theme.colors.background;
   }};
 `;
 

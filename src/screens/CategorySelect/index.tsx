@@ -39,13 +39,11 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({
         keyExtractor={category => category.slug}
         ItemSeparatorComponent={() => <Separator />}
         renderItem={({ item: category }) => (
-          // TODO: fix para active
           <Category
             onPress={() => onSelect(category.slug)}
             isActive={category.slug === activeCategorySlug}
           >
             <Icon name={category.icon} />
-
             <Name>{category.name}</Name>
           </Category>
         )}

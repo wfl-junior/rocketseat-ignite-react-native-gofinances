@@ -38,6 +38,8 @@ export const Container = styled.View<ContainerProps>`
         }};
       `;
     }
+
+    return "";
   }}
 `;
 
