@@ -6,7 +6,14 @@ import { theme } from "../global/styles/theme";
 import { Dashboard } from "../screens/Dashboard";
 import { Register } from "../screens/Register";
 
-const { Navigator, Screen } = createBottomTabNavigator();
+export type BottomTabNavigationParamList = {
+  Listagem: undefined;
+  Cadastrar: undefined;
+  Resumo: undefined;
+};
+
+const { Navigator, Screen } =
+  createBottomTabNavigator<BottomTabNavigationParamList>();
 
 export const AppRoutes: React.FC = () => (
   // @ts-ignore

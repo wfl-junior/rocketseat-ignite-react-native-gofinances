@@ -1,8 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from "react-native";
+import uuid from "react-native-uuid";
 import * as yup from "yup";
 import { Button } from "../../components/Form/Button";
 import { CategorySelectButton } from "../../components/Form/CategorySelectButton";
@@ -11,6 +12,7 @@ import {
   TransactionType,
   TransactionTypeButton,
 } from "../../components/Form/TransactionTypeButton";
+import { useBottomTabNavigation } from "../../hooks/useBottomTabNavigation";
 import { categories } from "../../utils/categories";
 import { asyncStorageKeyPrefix } from "../../utils/constants";
 import { CategorySelect } from "../CategorySelect";
@@ -45,10 +47,12 @@ const registerTransactionSchema = yup.object({
 const transactionsKey = `${asyncStorageKeyPrefix}transactions`;
 
 export const Register: React.FC = () => {
+  const { navigate } = useBottomTabNavigation();
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<RegisterFormData>({
     resolver: yupResolver(registerTransactionSchema),
   });
@@ -56,18 +60,6 @@ export const Register: React.FC = () => {
   const [category, setCategory] = useState<Category | null>(null);
   const [transactionType, setTransactionType] =
     useState<TransactionType | null>(null);
-
-  useEffect(() => {
-    AsyncStorage.getItem(transactionsKey)
-      .then(transactions => {
-        if (transactions) {
-          return console.log(JSON.parse(transactions));
-        }
-
-        console.log("no transactions");
-      })
-      .catch(console.error);
-  }, []);
 
   async function handleRegister(values: RegisterFormData) {
     if (!transactionType) {
@@ -81,6 +73,7 @@ export const Register: React.FC = () => {
     try {
       const newTransaction = {
         ...values,
+        id: String(uuid.v4()),
         transactionType,
         category: category.slug,
       };
@@ -95,7 +88,11 @@ export const Register: React.FC = () => {
         JSON.stringify([...transactions, newTransaction]),
       );
 
-      Alert.alert("Sucesso", "Transação salva com sucesso");
+      reset();
+      setCategory(null);
+      setTransactionType(null);
+
+      navigate("Listagem");
     } catch (error) {
       if (
         error instanceof TypeError &&
@@ -114,8 +111,23 @@ export const Register: React.FC = () => {
     setIsModalOpen(true);
   }
 
-  function handleCloseModal() {
+  function handleCloseCategorySelectModal() {
     setIsModalOpen(false);
+  }
+
+  function handleCategorySelect(slug: string) {
+    const selectedCategory = categories.find(category => {
+      return category.slug === slug;
+    });
+
+    if (selectedCategory) {
+      return setCategory({
+        slug: selectedCategory.slug,
+        name: selectedCategory.name,
+      });
+    }
+
+    setCategory(null);
   }
 
   return (
@@ -173,21 +185,8 @@ export const Register: React.FC = () => {
         <Modal visible={isModalOpen}>
           <CategorySelect
             activeCategorySlug={category?.slug}
-            onClose={handleCloseModal}
-            onSelect={slug => {
-              const selectedCategory = categories.find(category => {
-                return category.slug === slug;
-              });
-
-              if (selectedCategory) {
-                return setCategory({
-                  slug: selectedCategory.slug,
-                  name: selectedCategory.name,
-                });
-              }
-
-              setCategory(null);
-            }}
+            onClose={handleCloseCategorySelectModal}
+            onSelect={handleCategorySelect}
           />
         </Modal>
       </Container>
