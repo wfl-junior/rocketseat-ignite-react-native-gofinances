@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Modal } from "react-native";
 import { Button } from "../../components/Form/Button";
 import { CategorySelectButton } from "../../components/Form/CategorySelectButton";
-import { Input } from "../../components/Form/Input";
+import { InputForm } from "../../components/Form/InputForm";
 import {
   TransactionType,
   TransactionTypeButton,
@@ -23,13 +24,25 @@ interface Category {
   name: string;
 }
 
-interface RegisterProps {}
+interface FormData {
+  name: string;
+  amount: string;
+}
 
-export const Register: React.FC<RegisterProps> = () => {
+export const Register: React.FC = () => {
+  const { control, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState<Category | null>(null);
   const [transactionType, setTransactionType] =
     useState<TransactionType | null>(null);
+
+  function handleRegister(values: FormData) {
+    console.log({
+      ...values,
+      transactionType,
+      category: category?.slug,
+    });
+  }
 
   function handleCategorySelectButtonPress() {
     setIsModalOpen(true);
@@ -47,8 +60,8 @@ export const Register: React.FC<RegisterProps> = () => {
 
       <Form>
         <Fields>
-          <Input placeholder="Nome" />
-          <Input placeholder="Preço" />
+          <InputForm name="name" control={control} placeholder="Nome" />
+          <InputForm name="amount" control={control} placeholder="Preço" />
 
           <TransactionTypeButtons>
             <TransactionTypeButton
@@ -73,7 +86,7 @@ export const Register: React.FC<RegisterProps> = () => {
           />
         </Fields>
 
-        <Button title="Enviar" />
+        <Button title="Enviar" onPress={handleSubmit(handleRegister)} />
       </Form>
 
       <Modal visible={isModalOpen}>
