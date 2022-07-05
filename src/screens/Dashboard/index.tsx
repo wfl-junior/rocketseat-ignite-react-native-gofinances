@@ -1,9 +1,15 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { HighlightCard } from "../../components/HighlightCard";
 import {
   TransactionCard,
   TransactionCardProps,
 } from "../../components/TransactionCard";
+import { categories } from "../../utils/categories";
+import { transactionsKey } from "../../utils/constants";
+import { formatAmount } from "../../utils/formatAmount";
+import { formatDate } from "../../utils/formatDate";
 import {
   Container,
   Header,
@@ -20,93 +26,87 @@ import {
   UserWrapper,
 } from "./styles";
 
-const data: Array<TransactionCardProps & { id: string }> = [
-  {
-    id: "1",
-    type: "positive",
-    title: "Desenvolvimento de site",
-    amount: "R$ 12.000,00",
-    date: "13/04/2020",
-    category: {
-      name: "Vendas",
-      icon: "dollar-sign",
-    },
-  },
-  {
-    id: "2",
-    type: "negative",
-    title: "Hamburgueria Pizzy",
-    amount: "R$ 59,00",
-    date: "10/04/2020",
-    category: {
-      name: "Alimentação",
-      icon: "coffee",
-    },
-  },
-  {
-    id: "3",
-    type: "negative",
-    title: "Aluguel do apartamento",
-    amount: "R$ 1.200,00",
-    date: "27/03/2020",
-    category: {
-      name: "Casa",
-      icon: "shopping-bag",
-    },
-  },
-];
+interface Transaction extends TransactionCardProps {
+  id: string;
+}
 
-export const Dashboard: React.FC = () => (
-  <Container>
-    <Header>
-      <UserWrapper>
-        <UserInfo>
-          <Photo source={{ uri: "https://github.com/wfl-junior.png" }} />
+export const Dashboard: React.FC = () => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-          <User>
-            <UserGreeting>Olá,</UserGreeting>
-            <UserName>Wallace Júnior</UserName>
-          </User>
-        </UserInfo>
+  useEffect(() => {
+    AsyncStorage.getItem(transactionsKey)
+      .then(data => {
+        if (data) {
+          const transactions: Array<Transaction & { categorySlug: string }> =
+            JSON.parse(data);
 
-        <LogoutButton onPress={() => {}}>
-          <Icon name="power" />
-        </LogoutButton>
-      </UserWrapper>
-    </Header>
+          setTransactions(
+            transactions.map(transaction => ({
+              ...transaction,
+              amount: formatAmount(Number(transaction.amount)),
+              date: formatDate(transaction.date),
+              category: categories.find(
+                category => category.slug === transaction.categorySlug,
+              )!,
+            })),
+          );
+        }
+      })
+      .catch(console.log);
+  }, []);
 
-    <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
-      <HighlightCard
-        title="Entradas"
-        amount="R$ 17.400,00"
-        lastTransaction="Última entrada dia 13 de abril"
-        type="up"
-      />
+  return (
+    <Container>
+      <Header>
+        <UserWrapper>
+          <UserInfo>
+            <Photo source={{ uri: "https://github.com/wfl-junior.png" }} />
 
-      <HighlightCard
-        title="Saídas"
-        amount="R$ 1.259,00"
-        lastTransaction="Última saída dia 03 de abril"
-        type="down"
-      />
+            <User>
+              <UserGreeting>Olá,</UserGreeting>
+              <UserName>Wallace Júnior</UserName>
+            </User>
+          </UserInfo>
 
-      <HighlightCard
-        title="Total"
-        amount="R$ 16.141,00"
-        lastTransaction="01 à 16 de abril"
-        type="total"
-      />
-    </HighlightCards>
+          <LogoutButton onPress={() => {}}>
+            <Icon name="power" />
+          </LogoutButton>
+        </UserWrapper>
+      </Header>
 
-    <Transactions>
-      <Title>Listagem</Title>
+      <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
+        <HighlightCard
+          title="Entradas"
+          amount="R$ 17.400,00"
+          lastTransaction="Última entrada dia 13 de abril"
+          type="up"
+        />
 
-      <FlatList
-        data={data}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <TransactionCard {...item} />}
-        showsVerticalScrollIndicator={false}
-      />
-    </Transactions>
-  </Container>
-);
+        <HighlightCard
+          title="Saídas"
+          amount="R$ 1.259,00"
+          lastTransaction="Última saída dia 03 de abril"
+          type="down"
+        />
+
+        <HighlightCard
+          title="Total"
+          amount="R$ 16.141,00"
+          lastTransaction="01 à 16 de abril"
+          type="total"
+        />
+      </HighlightCards>
+
+      <Transactions>
+        <Title>Listagem</Title>
+
+        <FlatList
+          data={transactions}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <TransactionCard {...item} />}
+          showsVerticalScrollIndicator={false}
+        />
+      </Transactions>
+    </Container>
+  );
+};

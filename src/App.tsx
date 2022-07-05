@@ -6,6 +6,8 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import { loadAsync } from "expo-font";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
+import "intl";
+import "intl/locale-data/jsonp/pt-BR";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { StatusBar } from "react-native";
 import "react-native-gesture-handler";

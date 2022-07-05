@@ -30,7 +30,7 @@ export const Container = styled.View<ContainerProps>`
     if (isActive) {
       return css`
         background-color: ${({ theme }) => {
-          if (type === "down") {
+          if (type === "negative") {
             return theme.colors.attentionLight;
           }
 

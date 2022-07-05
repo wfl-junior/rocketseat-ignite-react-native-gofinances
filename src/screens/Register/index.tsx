@@ -14,7 +14,7 @@ import {
 } from "../../components/Form/TransactionTypeButton";
 import { useBottomTabNavigation } from "../../hooks/useBottomTabNavigation";
 import { categories } from "../../utils/categories";
-import { asyncStorageKeyPrefix } from "../../utils/constants";
+import { transactionsKey } from "../../utils/constants";
 import { CategorySelect } from "../CategorySelect";
 import {
   Container,
@@ -31,20 +31,18 @@ interface Category {
 }
 
 export interface RegisterFormData {
-  name: string;
+  title: string;
   amount: string;
 }
 
 const registerTransactionSchema = yup.object({
-  name: yup.string().required("O nome é obrigatório"),
+  title: yup.string().required("O título é obrigatório"),
   amount: yup
     .number()
     .typeError("Informe um valor numérico")
     .positive("O preço não pode ser negativo")
     .required("O preço é obrigatório"),
 });
-
-const transactionsKey = `${asyncStorageKeyPrefix}transactions`;
 
 export const Register: React.FC = () => {
   const { navigate } = useBottomTabNavigation();
@@ -56,6 +54,7 @@ export const Register: React.FC = () => {
   } = useForm<RegisterFormData>({
     resolver: yupResolver(registerTransactionSchema),
   });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState<Category | null>(null);
   const [transactionType, setTransactionType] =
@@ -74,8 +73,9 @@ export const Register: React.FC = () => {
       const newTransaction = {
         ...values,
         id: String(uuid.v4()),
-        transactionType,
-        category: category.slug,
+        type: transactionType,
+        categorySlug: category.slug,
+        date: new Date().toISOString(),
       };
 
       const existingTransactions = await AsyncStorage.getItem(transactionsKey);
@@ -140,12 +140,12 @@ export const Register: React.FC = () => {
         <Form>
           <Fields>
             <InputForm
-              name="name"
+              name="title"
               control={control}
-              placeholder="Nome"
+              placeholder="Título"
               autoCapitalize="sentences"
               autoCorrect={false}
-              error={errors.name}
+              error={errors.title}
             />
 
             <InputForm
@@ -158,17 +158,17 @@ export const Register: React.FC = () => {
 
             <TransactionTypeButtons>
               <TransactionTypeButton
-                type="up"
+                type="positive"
                 title="Entrada"
-                onPress={() => setTransactionType("up")}
-                isActive={transactionType === "up"}
+                onPress={() => setTransactionType("positive")}
+                isActive={transactionType === "positive"}
               />
 
               <TransactionTypeButton
-                type="down"
+                type="negative"
                 title="Saída"
-                onPress={() => setTransactionType("down")}
-                isActive={transactionType === "down"}
+                onPress={() => setTransactionType("negative")}
+                isActive={transactionType === "negative"}
               />
             </TransactionTypeButtons>
 
