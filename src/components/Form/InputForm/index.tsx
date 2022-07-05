@@ -1,18 +1,27 @@
-import { Control, Controller } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldError,
+  FieldValues,
+  Path,
+} from "react-hook-form";
 import { TextInputProps } from "react-native";
 import { Input } from "../Input";
-import { Container } from "./styles";
+import { Container, Error } from "./styles";
 
-interface InputFormProps extends TextInputProps {
-  name: string;
-  control: Control;
+interface InputFormProps<T extends FieldValues = FieldValues>
+  extends TextInputProps {
+  name: Path<T>;
+  control: Control<T>;
+  error?: FieldError;
 }
 
-export const InputForm: React.FC<InputFormProps> = ({
+export const InputForm = <T extends FieldValues = FieldValues>({
   name,
   control,
+  error,
   ...props
-}) => (
+}: InputFormProps<T>): JSX.Element => (
   <Container>
     <Controller
       name={name}
@@ -21,5 +30,7 @@ export const InputForm: React.FC<InputFormProps> = ({
         <Input value={value} onChangeText={onChange} {...props} />
       )}
     />
+
+    {error ? <Error>{error.message}</Error> : null}
   </Container>
 );
