@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
@@ -11,7 +12,17 @@ import { categories } from "../../utils/categories";
 import { transactionsKey } from "../../utils/constants";
 import { formatAmount } from "../../utils/formatAmount";
 import { TransactionInStorage } from "../Dashboard";
-import { ChartContainer, Container, Content, Header, Title } from "./styles";
+import {
+  ChartContainer,
+  Container,
+  Content,
+  Header,
+  Month,
+  MonthSelect,
+  MonthSelectButton,
+  MonthSelectIcon,
+  Title,
+} from "./styles";
 
 interface CategoryData {
   slug: string;
@@ -25,6 +36,7 @@ interface CategoryData {
 export const Summary: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categoriesData, setCategoriesData] = useState<CategoryData[]>([]);
+  const bottomTabBarHeight = useBottomTabBarHeight();
 
   const fetchTransactions = useCallback(() => {
     AsyncStorage.getItem(transactionsKey)
@@ -91,7 +103,22 @@ export const Summary: React.FC = () => {
         <Title>Resumo por categoria</Title>
       </Header>
 
-      <Content showsVerticalScrollIndicator={false}>
+      <Content
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: bottomTabBarHeight }}
+      >
+        <MonthSelect>
+          <MonthSelectButton>
+            <MonthSelectIcon name="chevron-left" />
+          </MonthSelectButton>
+
+          <Month>Julho, 2022</Month>
+
+          <MonthSelectButton>
+            <MonthSelectIcon name="chevron-right" />
+          </MonthSelectButton>
+        </MonthSelect>
+
         <ChartContainer>
           {/* @ts-ignore */}
           <VictoryPie

@@ -1,3 +1,5 @@
+import { Feather } from "@expo/vector-icons";
+import { BorderlessButton } from "react-native-gesture-handler";
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 
@@ -23,7 +25,26 @@ export const Title = styled.Text`
 
 export const Content = styled.ScrollView`
   flex: 1;
-  padding: ${RFValue(24)}px;
+  padding: 0 ${RFValue(24)}px;
+`;
+
+export const MonthSelect = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: ${RFValue(24)}px;
+`;
+
+export const MonthSelectButton = styled(BorderlessButton as any)``;
+
+export const MonthSelectIcon = styled(Feather as any)`
+  font-size: ${RFValue(24)}px;
+`;
+
+export const Month = styled.Text`
+  font-size: ${RFValue(20)}px;
+  font-family: ${({ theme }) => theme.fonts.regular};
 `;
 
 export const ChartContainer = styled.View`
