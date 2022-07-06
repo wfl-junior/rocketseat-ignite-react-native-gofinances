@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
-import { FlatList } from "react-native";
+import { Fragment, useCallback, useState } from "react";
+import { ActivityIndicator, FlatList } from "react-native";
+import { RFValue } from "react-native-responsive-fontsize";
 import { HighlightCard } from "../../components/HighlightCard";
 import {
   TransactionCard,
@@ -16,6 +17,7 @@ import {
   Header,
   HighlightCards,
   Icon,
+  LoadingContainer,
   LogoutButton,
   Photo,
   Title,
@@ -40,6 +42,7 @@ interface HighlightData<T extends string | number = string> {
 const formattedZero = formatAmount(0);
 
 export const Dashboard: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [highlightData, setHighlightData] = useState<HighlightData>({
     income: formattedZero,
@@ -49,7 +52,7 @@ export const Dashboard: React.FC = () => {
 
   const fetchTransactions = useCallback(() => {
     AsyncStorage.getItem(transactionsKey)
-      .then(data => {
+      .then(async data => {
         if (data) {
           const transactions: Array<
             Omit<Transaction, "category"> & { categorySlug: string }
@@ -92,63 +95,72 @@ export const Dashboard: React.FC = () => {
           });
         }
       })
-      .catch(console.log);
+      .catch(console.log)
+      .finally(() => setIsLoading(false));
   }, []);
 
   useFocusEffect(fetchTransactions);
 
   return (
     <Container>
-      <Header>
-        <UserWrapper>
-          <UserInfo>
-            <Photo source={{ uri: "https://github.com/wfl-junior.png" }} />
+      {isLoading ? (
+        <LoadingContainer>
+          <ActivityIndicator color="white" size={RFValue(48)} />
+        </LoadingContainer>
+      ) : (
+        <Fragment>
+          <Header>
+            <UserWrapper>
+              <UserInfo>
+                <Photo source={{ uri: "https://github.com/wfl-junior.png" }} />
 
-            <User>
-              <UserGreeting>Olá,</UserGreeting>
-              <UserName>Wallace Júnior</UserName>
-            </User>
-          </UserInfo>
+                <User>
+                  <UserGreeting>Olá,</UserGreeting>
+                  <UserName>Wallace Júnior</UserName>
+                </User>
+              </UserInfo>
 
-          <LogoutButton onPress={() => {}}>
-            <Icon name="power" />
-          </LogoutButton>
-        </UserWrapper>
-      </Header>
+              <LogoutButton onPress={() => {}}>
+                <Icon name="power" />
+              </LogoutButton>
+            </UserWrapper>
+          </Header>
 
-      <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
-        <HighlightCard
-          title="Entradas"
-          amount={highlightData.income}
-          lastTransaction="Última entrada dia 13 de abril"
-          type="up"
-        />
+          <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
+            <HighlightCard
+              title="Entradas"
+              amount={highlightData.income}
+              lastTransaction="Última entrada dia 13 de abril"
+              type="up"
+            />
 
-        <HighlightCard
-          title="Saídas"
-          amount={highlightData.outcome}
-          lastTransaction="Última saída dia 03 de abril"
-          type="down"
-        />
+            <HighlightCard
+              title="Saídas"
+              amount={highlightData.outcome}
+              lastTransaction="Última saída dia 03 de abril"
+              type="down"
+            />
 
-        <HighlightCard
-          title="Total"
-          amount={highlightData.total}
-          lastTransaction="01 à 16 de abril"
-          type="total"
-        />
-      </HighlightCards>
+            <HighlightCard
+              title="Total"
+              amount={highlightData.total}
+              lastTransaction="01 à 16 de abril"
+              type="total"
+            />
+          </HighlightCards>
 
-      <Transactions>
-        <Title>Listagem</Title>
+          <Transactions>
+            <Title>Listagem</Title>
 
-        <FlatList
-          data={transactions}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => <TransactionCard {...item} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </Transactions>
+            <FlatList
+              data={transactions}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => <TransactionCard {...item} />}
+              showsVerticalScrollIndicator={false}
+            />
+          </Transactions>
+        </Fragment>
+      )}
     </Container>
   );
 };
