@@ -2,19 +2,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
+import { RFValue } from "react-native-responsive-fontsize";
+import { VictoryPie } from "victory-native";
 import { HistoryCard } from "../../components/HistoryCard";
 import { LoadingScreen } from "../../components/LoadingScreen";
+import { theme } from "../../global/styles/theme";
 import { categories } from "../../utils/categories";
 import { transactionsKey } from "../../utils/constants";
 import { formatAmount } from "../../utils/formatAmount";
 import { TransactionInStorage } from "../Dashboard";
-import { Container, Content, Header, Title } from "./styles";
+import { ChartContainer, Container, Content, Header, Title } from "./styles";
 
 interface CategoryData {
   slug: string;
   name: string;
   color: string;
-  total: string;
+  total: number;
+  formattedTotal: string;
+  percentage: string;
 }
 
 export const Summary: React.FC = () => {
@@ -29,23 +34,33 @@ export const Summary: React.FC = () => {
 
           const formattedCategories = categories.reduce<CategoryData[]>(
             (data, category) => {
-              const total = transactions.reduce<number>(
-                (total, transaction) => {
+              const { total, categoryTotal } = transactions.reduce(
+                ({ total, categoryTotal }, transaction) => {
+                  const amount = Number(transaction.amount);
+
                   if (transaction.categorySlug === category.slug) {
-                    total += Number(transaction.amount);
+                    categoryTotal += amount;
                   }
 
-                  return total;
+                  return {
+                    total: total + amount,
+                    categoryTotal,
+                  };
                 },
-                0,
+                {
+                  total: 0,
+                  categoryTotal: 0,
+                },
               );
 
-              if (total > 0) {
+              if (categoryTotal > 0) {
                 data.push({
                   slug: category.slug,
                   name: category.name,
                   color: category.color,
-                  total: formatAmount(total),
+                  total: categoryTotal,
+                  formattedTotal: formatAmount(categoryTotal),
+                  percentage: `${((categoryTotal / total) * 100).toFixed(1)}%`,
                 });
               }
 
@@ -76,12 +91,30 @@ export const Summary: React.FC = () => {
         <Title>Resumo por categoria</Title>
       </Header>
 
-      <Content>
+      <Content showsVerticalScrollIndicator={false}>
+        <ChartContainer>
+          {/* @ts-ignore */}
+          <VictoryPie
+            data={categoriesData}
+            colorScale={categoriesData.map(category => category.color)}
+            x="percentage"
+            y="total"
+            labelRadius={50}
+            style={{
+              labels: {
+                fontSize: RFValue(16.65),
+                fontWeight: "bold",
+                fill: theme.colors.shape,
+              },
+            }}
+          />
+        </ChartContainer>
+
         {categoriesData.map(category => (
           <HistoryCard
             key={category.slug}
             title={category.name}
-            amount={category.total}
+            amount={category.formattedTotal}
             borderColor={category.color}
           />
         ))}
