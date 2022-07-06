@@ -1,6 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  addMonths,
+  format,
+  isSameMonth,
+  isSameYear,
+  subMonths,
+} from "date-fns";
+import ptBR from "date-fns/locale/pt-BR";
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -33,10 +41,29 @@ interface CategoryData {
   percentage: string;
 }
 
+interface SelectedDate {
+  date: Date;
+  formatted: string;
+}
+
+function formatSelectedDate(date: Date) {
+  return format(date, "MMMM, yyyy", {
+    locale: ptBR,
+  });
+}
+
 export const Summary: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categoriesData, setCategoriesData] = useState<CategoryData[]>([]);
   const bottomTabBarHeight = useBottomTabBarHeight();
+  const [selectedDate, setSelectedDate] = useState<SelectedDate>(() => {
+    const date = new Date();
+
+    return {
+      date,
+      formatted: formatSelectedDate(date),
+    };
+  });
 
   const fetchTransactions = useCallback(() => {
     AsyncStorage.getItem(transactionsKey)
@@ -47,17 +74,23 @@ export const Summary: React.FC = () => {
           const formattedCategories = categories.reduce<CategoryData[]>(
             (data, category) => {
               const { total, categoryTotal } = transactions.reduce(
-                ({ total, categoryTotal }, transaction) => {
-                  const amount = Number(transaction.amount);
+                (totals, transaction) => {
+                  const transactionDate = new Date(transaction.date);
 
-                  if (transaction.categorySlug === category.slug) {
-                    categoryTotal += amount;
+                  if (
+                    isSameYear(selectedDate.date, transactionDate) &&
+                    isSameMonth(selectedDate.date, transactionDate)
+                  ) {
+                    const amount = Number(transaction.amount);
+
+                    if (transaction.categorySlug === category.slug) {
+                      totals.categoryTotal += amount;
+                    }
+
+                    totals.total += amount;
                   }
 
-                  return {
-                    total: total + amount,
-                    categoryTotal,
-                  };
+                  return totals;
                 },
                 {
                   total: 0,
@@ -89,12 +122,24 @@ export const Summary: React.FC = () => {
         Alert.alert("Ocorreu um erro inesperado");
       })
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [selectedDate]);
 
   useFocusEffect(fetchTransactions);
 
   if (isLoading) {
     return <LoadingScreen />;
+  }
+
+  function handleDateChange(action: "next" | "previous") {
+    const newDate =
+      action === "next"
+        ? addMonths(selectedDate.date, 1)
+        : subMonths(selectedDate.date, 1);
+
+    setSelectedDate({
+      date: newDate,
+      formatted: formatSelectedDate(newDate),
+    });
   }
 
   return (
@@ -108,13 +153,13 @@ export const Summary: React.FC = () => {
         contentContainerStyle={{ paddingBottom: bottomTabBarHeight }}
       >
         <MonthSelect>
-          <MonthSelectButton>
+          <MonthSelectButton onPress={() => handleDateChange("previous")}>
             <MonthSelectIcon name="chevron-left" />
           </MonthSelectButton>
 
-          <Month>Julho, 2022</Month>
+          <Month>{selectedDate.formatted}</Month>
 
-          <MonthSelectButton>
+          <MonthSelectButton onPress={() => handleDateChange("next")}>
             <MonthSelectIcon name="chevron-right" />
           </MonthSelectButton>
         </MonthSelect>

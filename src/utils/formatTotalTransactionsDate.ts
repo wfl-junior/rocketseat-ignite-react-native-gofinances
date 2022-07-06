@@ -1,6 +1,14 @@
+import { isSameDay, isSameMonth, isSameYear } from "date-fns";
 import { formatLastTransactionDate } from "./formatLastTransactionDate";
 
 type MaybeDate = string | number | Date;
+
+console.log(
+  formatTotalTransactionsDate(
+    new Date().setFullYear(new Date().getFullYear() - 1),
+    new Date(),
+  ),
+);
 
 export function formatTotalTransactionsDate(
   minDate: MaybeDate,
@@ -14,21 +22,13 @@ export function formatTotalTransactionsDate(
     maxDate = new Date(maxDate);
   }
 
-  const isSameYear = minDate.getFullYear() === maxDate.getFullYear();
-
-  if (isSameYear) {
-    const isSameDay =
-      new Date(minDate).setHours(0, 0, 0, 0) ===
-      new Date(maxDate).setHours(0, 0, 0, 0);
-
-    if (isSameDay) {
+  if (isSameYear(minDate, maxDate)) {
+    if (isSameDay(minDate, maxDate)) {
       // Exemplo: 5 de julho de 2022
       return formatLastTransactionDate(minDate);
     }
 
-    const isSameMonth = minDate.getMonth() === maxDate.getMonth();
-
-    if (isSameMonth) {
+    if (isSameMonth(minDate, maxDate)) {
       // Exemplo: De 1 à 5 de julho de 2022
       return `De ${minDate.getDate()} à ${formatLastTransactionDate(maxDate)}`;
     }
