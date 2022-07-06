@@ -2,6 +2,7 @@
   "expo": {
     "name": "gofinances",
     "slug": "gofinances",
+    "scheme": "gofinances",
     "owner": "wfl-junior",
     "version": "0.1.0",
     "assetBundlePatterns": ["**/*"],

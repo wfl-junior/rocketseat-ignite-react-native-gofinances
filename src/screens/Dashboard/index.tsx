@@ -9,7 +9,7 @@ import {
   TransactionCardProps,
 } from "../../components/TransactionCard";
 import { categories } from "../../utils/categories";
-import { transactionsKey } from "../../utils/constants";
+import { defaultErrorMessage, transactionsKey } from "../../utils/constants";
 import { formatAmount } from "../../utils/formatAmount";
 import { formatDate } from "../../utils/formatDate";
 import { formatLastTransactionDate } from "../../utils/formatLastTransactionDate";
@@ -144,7 +144,7 @@ export const Dashboard: React.FC = () => {
       })
       .catch(error => {
         console.log(error);
-        Alert.alert("Houston, we have a problem.");
+        Alert.alert(defaultErrorMessage);
       })
       .finally(() => setIsLoading(false));
   }, []);

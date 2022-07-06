@@ -17,7 +17,7 @@ import { HistoryCard } from "../../components/HistoryCard";
 import { LoadingScreen } from "../../components/LoadingScreen";
 import { theme } from "../../global/styles/theme";
 import { categories } from "../../utils/categories";
-import { transactionsKey } from "../../utils/constants";
+import { defaultErrorMessage, transactionsKey } from "../../utils/constants";
 import { formatAmount } from "../../utils/formatAmount";
 import { TransactionInStorage } from "../Dashboard";
 import {
@@ -120,7 +120,7 @@ export const Summary: React.FC = () => {
       })
       .catch(error => {
         console.log(error);
-        Alert.alert("Houston, we have a problem.");
+        Alert.alert(defaultErrorMessage);
       })
       .finally(() => setIsLoading(false));
   }, [selectedDate]);
