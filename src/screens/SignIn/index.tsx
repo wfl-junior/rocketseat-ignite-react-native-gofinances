@@ -2,7 +2,9 @@ import { RFValue } from "react-native-responsive-fontsize";
 import AppleIcon from "../../assets/apple-icon.svg";
 import GoogleIcon from "../../assets/google-icon.svg";
 import Logo from "../../assets/logo.svg";
+import { SignInButton } from "../../components/SignInButton";
 import {
+  ButtonsContainer,
   Container,
   Footer,
   Header,
@@ -27,8 +29,10 @@ export const SignIn: React.FC = () => {
       </Header>
 
       <Footer>
-        <GoogleIcon />
-        <AppleIcon />
+        <ButtonsContainer>
+          <SignInButton title="Entrar com Google" svg={GoogleIcon} />
+          <SignInButton title="Entrar com Apple" svg={AppleIcon} />
+        </ButtonsContainer>
       </Footer>
     </Container>
   );
