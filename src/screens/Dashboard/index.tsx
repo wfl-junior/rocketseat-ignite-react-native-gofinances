@@ -31,8 +31,21 @@ interface Transaction extends TransactionCardProps {
   id: string;
 }
 
+interface HighlightData<T extends string | number = string> {
+  income: T;
+  outcome: T;
+  total: T;
+}
+
+const formattedZero = formatAmount(0);
+
 export const Dashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [highlightData, setHighlightData] = useState<HighlightData>({
+    income: formattedZero,
+    outcome: formattedZero,
+    total: formattedZero,
+  });
 
   const fetchTransactions = useCallback(() => {
     AsyncStorage.getItem(transactionsKey)
@@ -42,18 +55,41 @@ export const Dashboard: React.FC = () => {
             Omit<Transaction, "category"> & { categorySlug: string }
           > = JSON.parse(data);
 
-          setTransactions(
-            transactions.map(transaction => ({
+          const newHighlightData: HighlightData<number> = {
+            income: 0,
+            outcome: 0,
+            total: 0,
+          };
+
+          const formattedTransactions = transactions.map(transaction => {
+            const amount = Number(transaction.amount);
+
+            if (transaction.type === "positive") {
+              newHighlightData.income += amount;
+              newHighlightData.total += amount;
+            } else {
+              newHighlightData.outcome += amount;
+              newHighlightData.total -= amount;
+            }
+
+            return {
               id: transaction.id,
               title: transaction.title,
               type: transaction.type,
-              amount: formatAmount(Number(transaction.amount)),
+              amount: formatAmount(amount),
               date: formatDate(transaction.date),
               category: categories.find(
                 category => category.slug === transaction.categorySlug,
               )!,
-            })),
-          );
+            };
+          });
+
+          setTransactions(formattedTransactions);
+          setHighlightData({
+            income: formatAmount(newHighlightData.income),
+            outcome: formatAmount(newHighlightData.outcome),
+            total: formatAmount(newHighlightData.total),
+          });
         }
       })
       .catch(console.log);
@@ -83,21 +119,21 @@ export const Dashboard: React.FC = () => {
       <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
         <HighlightCard
           title="Entradas"
-          amount="R$ 17.400,00"
+          amount={highlightData.income}
           lastTransaction="Última entrada dia 13 de abril"
           type="up"
         />
 
         <HighlightCard
           title="Saídas"
-          amount="R$ 1.259,00"
+          amount={highlightData.outcome}
           lastTransaction="Última saída dia 03 de abril"
           type="down"
         />
 
         <HighlightCard
           title="Total"
-          amount="R$ 16.141,00"
+          amount={highlightData.total}
           lastTransaction="01 à 16 de abril"
           type="total"
         />
