@@ -5,6 +5,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { theme } from "../global/styles/theme";
 import { Dashboard } from "../screens/Dashboard";
 import { Register } from "../screens/Register";
+import { Summary } from "../screens/Summary";
 
 export type BottomTabNavigationParamList = {
   Listagem: undefined;
@@ -57,7 +58,7 @@ export const AppRoutes: React.FC = () => (
 
     <Screen
       name="Resumo"
-      component={Register}
+      component={Summary}
       options={{
         tabBarIcon: ({ size, color }) => (
           // @ts-ignore
