@@ -9,6 +9,7 @@ export const Container = styled.View<ContainerProps>`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.shape};
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
   padding: ${RFValue(12)}px ${RFValue(24)}px;
   border-radius: 5px;
@@ -26,6 +27,7 @@ export const Title = styled.Text`
 
 export const AmountContainer = styled.View`
   flex-direction: row;
+  align-items: center;
 `;
 
 export const CurrencySymbol = styled.Text`

@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, FlatList } from "react-native";
-import { RFValue } from "react-native-responsive-fontsize";
+import { Alert, FlatList } from "react-native";
 import { HighlightCard } from "../../components/HighlightCard";
+import { LoadingScreen } from "../../components/LoadingScreen";
 import {
   TransactionCard,
   TransactionCardProps,
@@ -19,7 +19,6 @@ import {
   Header,
   HighlightCards,
   Icon,
-  LoadingContainer,
   LogoutButton,
   Photo,
   Title,
@@ -34,6 +33,10 @@ import {
 interface Transaction extends TransactionCardProps {
   id: string;
 }
+
+export type TransactionInStorage = Omit<Transaction, "category"> & {
+  categorySlug: string;
+};
 
 interface HighlightData<T = { amount: string; date: string }> {
   income: T;
@@ -67,9 +70,7 @@ export const Dashboard: React.FC = () => {
     AsyncStorage.getItem(transactionsKey)
       .then(async data => {
         if (data) {
-          const transactions: Array<
-            Omit<Transaction, "category"> & { categorySlug: string }
-          > = JSON.parse(data);
+          const transactions: TransactionInStorage[] = JSON.parse(data);
 
           const newHighlightData: HighlightData<number> = {
             income: 0,
@@ -151,11 +152,7 @@ export const Dashboard: React.FC = () => {
   useFocusEffect(fetchTransactions);
 
   if (isLoading) {
-    return (
-      <LoadingContainer>
-        <ActivityIndicator color="white" size={RFValue(48)} />
-      </LoadingContainer>
-    );
+    return <LoadingScreen />;
   }
 
   return (

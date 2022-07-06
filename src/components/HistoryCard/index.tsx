@@ -22,7 +22,7 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({
 
     <AmountContainer>
       <CurrencySymbol>R$</CurrencySymbol>
-      <Amount>{amount.replace(/R\$\s+/g, "")}</Amount>
+      <Amount>{amount.replace("R$", "")}</Amount>
     </AmountContainer>
   </Container>
 );
