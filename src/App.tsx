@@ -13,6 +13,7 @@ import { StatusBar } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
+import { AuthContextProvider } from "./contexts/AuthContext";
 import { theme } from "./global/styles/theme";
 import { SignIn } from "./screens/SignIn";
 
@@ -70,7 +71,9 @@ export const App: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <NavigationContainer>
-            <SignIn />
+            <AuthContextProvider>
+              <SignIn />
+            </AuthContextProvider>
           </NavigationContainer>
         </ThemeProvider>
       </GestureHandlerRootView>

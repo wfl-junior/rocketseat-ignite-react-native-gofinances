@@ -3,6 +3,7 @@ import AppleIcon from "../../assets/apple-icon.svg";
 import GoogleIcon from "../../assets/google-icon.svg";
 import Logo from "../../assets/logo.svg";
 import { SignInButton } from "../../components/SignInButton";
+import { useAuthContext } from "../../contexts/AuthContext";
 import {
   ButtonsContainer,
   Container,
@@ -14,6 +15,8 @@ import {
 } from "./styles";
 
 export const SignIn: React.FC = () => {
+  const {} = useAuthContext();
+
   return (
     <Container>
       <Header>
