@@ -1,5 +1,5 @@
-export function formatDate(date: string | Date): string {
-  if (typeof date === "string") {
+export function formatDate(date: number | string | Date): string {
+  if (!(date instanceof Date)) {
     date = new Date(date);
   }
 

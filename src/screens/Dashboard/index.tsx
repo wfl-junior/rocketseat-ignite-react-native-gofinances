@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
-import { Fragment, useCallback, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, Alert, FlatList } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { HighlightCard } from "../../components/HighlightCard";
 import {
@@ -12,6 +12,8 @@ import { categories } from "../../utils/categories";
 import { transactionsKey } from "../../utils/constants";
 import { formatAmount } from "../../utils/formatAmount";
 import { formatDate } from "../../utils/formatDate";
+import { formatLastTransactionDate } from "../../utils/formatLastTransactionDate";
+import { formatTotalTransactionsDate } from "../../utils/formatTotalTransactionsDate";
 import {
   Container,
   Header,
@@ -33,7 +35,7 @@ interface Transaction extends TransactionCardProps {
   id: string;
 }
 
-interface HighlightData<T extends string | number = string> {
+interface HighlightData<T = { amount: string; date: string }> {
   income: T;
   outcome: T;
   total: T;
@@ -41,14 +43,25 @@ interface HighlightData<T extends string | number = string> {
 
 const formattedZero = formatAmount(0);
 
+const initialHighlightData: HighlightData = {
+  income: {
+    amount: formattedZero,
+    date: "",
+  },
+  outcome: {
+    amount: formattedZero,
+    date: "",
+  },
+  total: {
+    amount: formattedZero,
+    date: "",
+  },
+};
+
 export const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [highlightData, setHighlightData] = useState<HighlightData>({
-    income: formattedZero,
-    outcome: formattedZero,
-    total: formattedZero,
-  });
+  const [highlightData, setHighlightData] = useState(initialHighlightData);
 
   const fetchTransactions = useCallback(() => {
     AsyncStorage.getItem(transactionsKey)
@@ -64,15 +77,28 @@ export const Dashboard: React.FC = () => {
             total: 0,
           };
 
+          const dates: HighlightData<number[]> = {
+            income: [],
+            outcome: [],
+            total: [],
+          };
+
           const formattedTransactions = transactions.map(transaction => {
             const amount = Number(transaction.amount);
+            const date = new Date(transaction.date);
 
             if (transaction.type === "positive") {
               newHighlightData.income += amount;
               newHighlightData.total += amount;
+
+              dates.income.push(date.getTime());
+              dates.total.push(date.getTime());
             } else {
               newHighlightData.outcome += amount;
               newHighlightData.total -= amount;
+
+              dates.outcome.push(date.getTime());
+              dates.total.push(date.getTime());
             }
 
             return {
@@ -80,7 +106,7 @@ export const Dashboard: React.FC = () => {
               title: transaction.title,
               type: transaction.type,
               amount: formatAmount(amount),
-              date: formatDate(transaction.date),
+              date: formatDate(date),
               category: categories.find(
                 category => category.slug === transaction.categorySlug,
               )!,
@@ -88,79 +114,102 @@ export const Dashboard: React.FC = () => {
           });
 
           setTransactions(formattedTransactions);
+
+          const lastIncomeDate = Math.max(...dates.income);
+          const lastOutcomeDate = Math.max(...dates.outcome);
+          const firstTotalDate = Math.min(...dates.total);
+          const lastTotalDate = Math.max(...dates.total);
+
+          const formattedLastIncomeDate =
+            formatLastTransactionDate(lastIncomeDate);
+          const formattedLastOutcomeDate =
+            formatLastTransactionDate(lastOutcomeDate);
+
           setHighlightData({
-            income: formatAmount(newHighlightData.income),
-            outcome: formatAmount(newHighlightData.outcome),
-            total: formatAmount(newHighlightData.total),
+            income: {
+              amount: formatAmount(newHighlightData.income),
+              date: `Última entrada dia ${formattedLastIncomeDate}`,
+            },
+            outcome: {
+              amount: formatAmount(newHighlightData.outcome),
+              date: `Última saída dia ${formattedLastOutcomeDate}`,
+            },
+            total: {
+              amount: formatAmount(newHighlightData.total),
+              date: formatTotalTransactionsDate(firstTotalDate, lastTotalDate),
+            },
           });
         }
       })
-      .catch(console.log)
+      .catch(error => {
+        console.log(error);
+        Alert.alert("Ocorreu um erro inesperado");
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
   useFocusEffect(fetchTransactions);
 
+  if (isLoading) {
+    return (
+      <LoadingContainer>
+        <ActivityIndicator color="white" size={RFValue(48)} />
+      </LoadingContainer>
+    );
+  }
+
   return (
     <Container>
-      {isLoading ? (
-        <LoadingContainer>
-          <ActivityIndicator color="white" size={RFValue(48)} />
-        </LoadingContainer>
-      ) : (
-        <Fragment>
-          <Header>
-            <UserWrapper>
-              <UserInfo>
-                <Photo source={{ uri: "https://github.com/wfl-junior.png" }} />
+      <Header>
+        <UserWrapper>
+          <UserInfo>
+            <Photo source={{ uri: "https://github.com/wfl-junior.png" }} />
 
-                <User>
-                  <UserGreeting>Olá,</UserGreeting>
-                  <UserName>Wallace Júnior</UserName>
-                </User>
-              </UserInfo>
+            <User>
+              <UserGreeting>Olá,</UserGreeting>
+              <UserName>Wallace Júnior</UserName>
+            </User>
+          </UserInfo>
 
-              <LogoutButton onPress={() => {}}>
-                <Icon name="power" />
-              </LogoutButton>
-            </UserWrapper>
-          </Header>
+          <LogoutButton onPress={() => {}}>
+            <Icon name="power" />
+          </LogoutButton>
+        </UserWrapper>
+      </Header>
 
-          <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
-            <HighlightCard
-              title="Entradas"
-              amount={highlightData.income}
-              lastTransaction="Última entrada dia 13 de abril"
-              type="up"
-            />
+      <HighlightCards horizontal showsHorizontalScrollIndicator={false}>
+        <HighlightCard
+          title="Entradas"
+          amount={highlightData.income.amount}
+          lastTransaction={highlightData.income.date}
+          type="up"
+        />
 
-            <HighlightCard
-              title="Saídas"
-              amount={highlightData.outcome}
-              lastTransaction="Última saída dia 03 de abril"
-              type="down"
-            />
+        <HighlightCard
+          title="Saídas"
+          amount={highlightData.outcome.amount}
+          lastTransaction={highlightData.outcome.date}
+          type="down"
+        />
 
-            <HighlightCard
-              title="Total"
-              amount={highlightData.total}
-              lastTransaction="01 à 16 de abril"
-              type="total"
-            />
-          </HighlightCards>
+        <HighlightCard
+          title="Total"
+          amount={highlightData.total.amount}
+          lastTransaction={highlightData.total.date}
+          type="total"
+        />
+      </HighlightCards>
 
-          <Transactions>
-            <Title>Listagem</Title>
+      <Transactions>
+        <Title>Listagem</Title>
 
-            <FlatList
-              data={transactions}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => <TransactionCard {...item} />}
-              showsVerticalScrollIndicator={false}
-            />
-          </Transactions>
-        </Fragment>
-      )}
+        <FlatList
+          data={transactions}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <TransactionCard {...item} />}
+          showsVerticalScrollIndicator={false}
+        />
+      </Transactions>
     </Container>
   );
 };
