@@ -14,7 +14,7 @@ import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./global/styles/theme";
-import { AppRoutes } from "./routes/app.routes";
+import { SignIn } from "./screens/SignIn";
 
 export const App: React.FC = () => {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -70,7 +70,7 @@ export const App: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <NavigationContainer>
-            <AppRoutes />
+            <SignIn />
           </NavigationContainer>
         </ThemeProvider>
       </GestureHandlerRootView>
