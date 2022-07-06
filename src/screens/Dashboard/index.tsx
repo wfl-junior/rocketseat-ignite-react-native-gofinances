@@ -144,7 +144,7 @@ export const Dashboard: React.FC = () => {
       })
       .catch(error => {
         console.log(error);
-        Alert.alert("Ocorreu um erro inesperado");
+        Alert.alert("Houston, we have a problem.");
       })
       .finally(() => setIsLoading(false));
   }, []);

@@ -78,6 +78,7 @@ export const Summary: React.FC = () => {
                   const transactionDate = new Date(transaction.date);
 
                   if (
+                    transaction.type === "negative" &&
                     isSameYear(selectedDate.date, transactionDate) &&
                     isSameMonth(selectedDate.date, transactionDate)
                   ) {
@@ -119,7 +120,7 @@ export const Summary: React.FC = () => {
       })
       .catch(error => {
         console.log(error);
-        Alert.alert("Ocorreu um erro inesperado");
+        Alert.alert("Houston, we have a problem.");
       })
       .finally(() => setIsLoading(false));
   }, [selectedDate]);
@@ -131,6 +132,8 @@ export const Summary: React.FC = () => {
   }
 
   function handleDateChange(action: "next" | "previous") {
+    setIsLoading(true);
+
     const newDate =
       action === "next"
         ? addMonths(selectedDate.date, 1)
@@ -171,7 +174,7 @@ export const Summary: React.FC = () => {
             colorScale={categoriesData.map(category => category.color)}
             x="percentage"
             y="total"
-            labelRadius={50}
+            labelRadius={95}
             style={{
               labels: {
                 fontSize: RFValue(16.65),

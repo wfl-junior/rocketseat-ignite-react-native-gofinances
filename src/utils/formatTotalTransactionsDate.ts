@@ -3,13 +3,6 @@ import { formatLastTransactionDate } from "./formatLastTransactionDate";
 
 type MaybeDate = string | number | Date;
 
-console.log(
-  formatTotalTransactionsDate(
-    new Date().setFullYear(new Date().getFullYear() - 1),
-    new Date(),
-  ),
-);
-
 export function formatTotalTransactionsDate(
   minDate: MaybeDate,
   maxDate: MaybeDate,
