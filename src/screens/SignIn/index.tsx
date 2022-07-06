@@ -15,7 +15,8 @@ import {
 } from "./styles";
 
 export const SignIn: React.FC = () => {
-  const {} = useAuthContext();
+  const { user } = useAuthContext();
+  console.log(user);
 
   return (
     <Container>
