@@ -9,7 +9,10 @@ import {
   TransactionCardProps,
 } from "../../components/TransactionCard";
 import { categories } from "../../utils/categories";
-import { defaultErrorMessage, transactionsKey } from "../../utils/constants";
+import {
+  defaultErrorMessage,
+  transactionsStorageKey,
+} from "../../utils/constants";
 import { formatAmount } from "../../utils/formatAmount";
 import { formatDate } from "../../utils/formatDate";
 import { formatLastTransactionDate } from "../../utils/formatLastTransactionDate";
@@ -67,7 +70,7 @@ export const Dashboard: React.FC = () => {
   const [highlightData, setHighlightData] = useState(initialHighlightData);
 
   const fetchTransactions = useCallback(() => {
-    AsyncStorage.getItem(transactionsKey)
+    AsyncStorage.getItem(transactionsStorageKey)
       .then(async data => {
         if (data) {
           const transactions: TransactionInStorage[] = JSON.parse(data);

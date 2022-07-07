@@ -4,8 +4,14 @@ import {
   signInAsync,
 } from "expo-apple-authentication";
 import { startAsync } from "expo-auth-session";
-import { createContext, useCallback, useContext, useState } from "react";
-import { userKey } from "../utils/constants";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { userStorageKey } from "../utils/constants";
 
 interface User {
   id: string;
@@ -16,6 +22,8 @@ interface User {
 
 interface AuthContextData {
   user: User | null;
+  isLoggedIn: boolean;
+  isUserLoading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
 }
@@ -39,6 +47,18 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isUserLoading, setIsUserLoading] = useState(true);
+
+  useEffect(() => {
+    AsyncStorage.getItem(userStorageKey)
+      .then(data => {
+        if (data) {
+          setUser(JSON.parse(data));
+        }
+      })
+      .catch(console.log)
+      .finally(() => setIsUserLoading(false));
+  }, []);
 
   const signInWithGoogle = useCallback(async () => {
     const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -65,7 +85,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       };
 
       setUser(user);
-      await AsyncStorage.setItem(userKey, JSON.stringify(user));
+      await AsyncStorage.setItem(userStorageKey, JSON.stringify(user));
     }
   }, []);
 
@@ -85,12 +105,20 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       };
 
       setUser(user);
-      await AsyncStorage.setItem(userKey, JSON.stringify(user));
+      await AsyncStorage.setItem(userStorageKey, JSON.stringify(user));
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoggedIn: !!user,
+        isUserLoading,
+        signInWithGoogle,
+        signInWithApple,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

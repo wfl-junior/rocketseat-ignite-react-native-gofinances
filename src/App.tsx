@@ -3,7 +3,6 @@ import {
   Poppins_500Medium,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
-import { NavigationContainer } from "@react-navigation/native";
 import { loadAsync } from "expo-font";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import "intl";
@@ -15,7 +14,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { theme } from "./global/styles/theme";
-import { SignIn } from "./screens/SignIn";
+import { Routes } from "./routes";
 
 export const App: React.FC = () => {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -70,11 +69,9 @@ export const App: React.FC = () => {
         onLayout={handleLayoutRootView}
       >
         <ThemeProvider theme={theme}>
-          <NavigationContainer>
-            <AuthContextProvider>
-              <SignIn />
-            </AuthContextProvider>
-          </NavigationContainer>
+          <AuthContextProvider>
+            <Routes />
+          </AuthContextProvider>
         </ThemeProvider>
       </GestureHandlerRootView>
     </Fragment>

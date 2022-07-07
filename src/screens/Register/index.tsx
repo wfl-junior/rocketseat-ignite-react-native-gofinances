@@ -14,7 +14,7 @@ import {
 } from "../../components/Form/TransactionTypeButton";
 import { useBottomTabNavigation } from "../../hooks/useBottomTabNavigation";
 import { categories } from "../../utils/categories";
-import { transactionsKey } from "../../utils/constants";
+import { transactionsStorageKey } from "../../utils/constants";
 import { CategorySelect } from "../CategorySelect";
 import {
   Container,
@@ -78,13 +78,15 @@ export const Register: React.FC = () => {
         date: new Date().toISOString(),
       };
 
-      const existingTransactions = await AsyncStorage.getItem(transactionsKey);
+      const existingTransactions = await AsyncStorage.getItem(
+        transactionsStorageKey,
+      );
       const transactions = existingTransactions
         ? JSON.parse(existingTransactions)
         : [];
 
       await AsyncStorage.setItem(
-        transactionsKey,
+        transactionsStorageKey,
         JSON.stringify([...transactions, newTransaction]),
       );
 
@@ -98,7 +100,9 @@ export const Register: React.FC = () => {
         error instanceof TypeError &&
         error.message.toLowerCase().includes("invalid attempt to spread")
       ) {
-        await AsyncStorage.removeItem(transactionsKey).catch(console.log);
+        await AsyncStorage.removeItem(transactionsStorageKey).catch(
+          console.log,
+        );
       } else {
         console.log(error);
       }

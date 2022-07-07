@@ -17,7 +17,10 @@ import { HistoryCard } from "../../components/HistoryCard";
 import { LoadingScreen } from "../../components/LoadingScreen";
 import { theme } from "../../global/styles/theme";
 import { categories } from "../../utils/categories";
-import { defaultErrorMessage, transactionsKey } from "../../utils/constants";
+import {
+  defaultErrorMessage,
+  transactionsStorageKey,
+} from "../../utils/constants";
 import { formatAmount } from "../../utils/formatAmount";
 import { TransactionInStorage } from "../Dashboard";
 import {
@@ -66,7 +69,7 @@ export const Summary: React.FC = () => {
   });
 
   const fetchTransactions = useCallback(() => {
-    AsyncStorage.getItem(transactionsKey)
+    AsyncStorage.getItem(transactionsStorageKey)
       .then(async data => {
         if (data) {
           const transactions: TransactionInStorage[] = JSON.parse(data);
