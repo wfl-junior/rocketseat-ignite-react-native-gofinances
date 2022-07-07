@@ -34,8 +34,8 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const [user, setUser] = useState<User | null>(null);
 
   const singInWithGoogle = useCallback(async () => {
-    const CLIENT_ID = "";
-    const REDIRECT_URI = "";
+    const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+    const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
     const RESPONSE_TYPE = "token";
     const SCOPE = encodeURI("profile email");
 
@@ -45,7 +45,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
     if (type === "success") {
       const response = await fetch(
-        `https://googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`,
+        `https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${params.access_token}`,
       );
 
       const data = await response.json();
@@ -53,7 +53,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       setUser({
         id: data.id,
         email: data.email,
-        name: data.given_name,
+        name: data.name,
         image: data.picture,
       });
     }
