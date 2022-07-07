@@ -16,14 +16,23 @@ import {
 } from "./styles";
 
 export const SignIn: React.FC = () => {
-  const { singInWithGoogle } = useAuthContext();
+  const { signInWithGoogle, signInWithApple } = useAuthContext();
 
   async function handleSignInWithGoogle() {
     try {
-      await singInWithGoogle();
+      await signInWithGoogle();
     } catch (error) {
       console.log(error);
       Alert.alert("Não foi possível conectar com a conta Google");
+    }
+  }
+
+  async function handleSignInWithApple() {
+    try {
+      await signInWithApple();
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Não foi possível conectar com a conta Apple");
     }
   }
 
@@ -49,7 +58,11 @@ export const SignIn: React.FC = () => {
             onPress={handleSignInWithGoogle}
           />
 
-          <SignInButton title="Entrar com Apple" svg={AppleIcon} />
+          <SignInButton
+            title="Entrar com Apple"
+            svg={AppleIcon}
+            onPress={handleSignInWithApple}
+          />
         </ButtonsContainer>
       </Footer>
     </Container>

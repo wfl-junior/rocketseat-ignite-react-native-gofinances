@@ -1,5 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  AppleAuthenticationScope,
+  signInAsync,
+} from "expo-apple-authentication";
 import { startAsync } from "expo-auth-session";
 import { createContext, useCallback, useContext, useState } from "react";
+import { userKey } from "../utils/constants";
 
 interface User {
   id: string;
@@ -10,7 +16,8 @@ interface User {
 
 interface AuthContextData {
   user: User | null;
-  singInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -33,7 +40,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const singInWithGoogle = useCallback(async () => {
+  const signInWithGoogle = useCallback(async () => {
     const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
     const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
     const RESPONSE_TYPE = "token";
@@ -50,17 +57,40 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       const data = await response.json();
 
-      setUser({
+      const user: User = {
         id: data.id,
         email: data.email,
         name: data.name,
         image: data.picture,
-      });
+      };
+
+      setUser(user);
+      await AsyncStorage.setItem(userKey, JSON.stringify(user));
+    }
+  }, []);
+
+  const signInWithApple = useCallback(async () => {
+    const credential = await signInAsync({
+      requestedScopes: [
+        AppleAuthenticationScope.EMAIL,
+        AppleAuthenticationScope.FULL_NAME,
+      ],
+    });
+
+    if (credential) {
+      const user: User = {
+        id: credential.user,
+        email: credential.email!,
+        name: credential.fullName?.givenName!,
+      };
+
+      setUser(user);
+      await AsyncStorage.setItem(userKey, JSON.stringify(user));
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, singInWithGoogle }}>
+    <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>
       {children}
     </AuthContext.Provider>
   );
