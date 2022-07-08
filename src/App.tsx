@@ -8,7 +8,7 @@ import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import "intl";
 import "intl/locale-data/jsonp/pt-BR";
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { StatusBar } from "react-native";
+import { LogBox, StatusBar } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
@@ -16,6 +16,8 @@ import { LoadingScreen } from "./components/LoadingScreen";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { theme } from "./global/styles/theme";
 import { Routes } from "./routes";
+
+LogBox.ignoreLogs([/deprecated/i]);
 
 export const App: React.FC = () => {
   const [appIsReady, setAppIsReady] = useState(false);
