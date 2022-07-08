@@ -49,19 +49,20 @@ interface HighlightData<T = { amount: string; date: string }> {
 }
 
 const formattedZero = formatAmount(0);
+const noTransactionsMessage = "Não há transações";
 
 const initialHighlightData: HighlightData = {
   income: {
     amount: formattedZero,
-    date: "",
+    date: noTransactionsMessage,
   },
   outcome: {
     amount: formattedZero,
-    date: "",
+    date: noTransactionsMessage,
   },
   total: {
     amount: formattedZero,
-    date: "",
+    date: noTransactionsMessage,
   },
 };
 
@@ -126,23 +127,45 @@ export const Dashboard: React.FC = () => {
           const firstTotalDate = Math.min(...dates.total);
           const lastTotalDate = Math.max(...dates.total);
 
-          const formattedLastIncomeDate =
-            formatLastTransactionDate(lastIncomeDate);
-          const formattedLastOutcomeDate =
-            formatLastTransactionDate(lastOutcomeDate);
+          const incomeDateMessage =
+            dates.income.length > 0
+              ? `Última entrada dia ${formatLastTransactionDate(
+                  lastIncomeDate,
+                )}`
+              : noTransactionsMessage;
+
+          const outcomeDateMessage =
+            dates.outcome.length > 0
+              ? `Última saída dia ${formatLastTransactionDate(lastOutcomeDate)}`
+              : noTransactionsMessage;
+
+          let totalDateMessage = "";
+
+          if (dates.income.length > 0 && dates.outcome.length > 0) {
+            totalDateMessage = formatTotalTransactionsDate(
+              firstTotalDate,
+              lastTotalDate,
+            );
+          } else {
+            if (!dates.income.length) {
+              totalDateMessage = outcomeDateMessage;
+            } else {
+              totalDateMessage = incomeDateMessage;
+            }
+          }
 
           setHighlightData({
             income: {
               amount: formatAmount(newHighlightData.income),
-              date: `Última entrada dia ${formattedLastIncomeDate}`,
+              date: incomeDateMessage,
             },
             outcome: {
               amount: formatAmount(newHighlightData.outcome),
-              date: `Última saída dia ${formattedLastOutcomeDate}`,
+              date: outcomeDateMessage,
             },
             total: {
               amount: formatAmount(newHighlightData.total),
-              date: formatTotalTransactionsDate(firstTotalDate, lastTotalDate),
+              date: totalDateMessage,
             },
           });
         }
