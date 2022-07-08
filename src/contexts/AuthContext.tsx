@@ -4,13 +4,8 @@ import {
   signInAsync,
 } from "expo-apple-authentication";
 import { startAsync } from "expo-auth-session";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext } from "react";
+import { useAsyncStorageState } from "../hooks/useAsyncStorageState";
 import { userStorageKey } from "../utils/constants";
 
 interface User {
@@ -47,19 +42,8 @@ interface SignInWithGoogleResponse {
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
-
-  useEffect(() => {
-    AsyncStorage.getItem(userStorageKey)
-      .then(data => {
-        if (data) {
-          setUser(JSON.parse(data));
-        }
-      })
-      .catch(console.log)
-      .finally(() => setIsLoadingUser(false));
-  }, []);
+  const [user, setUser, isLoadingUser, setIsLoadingUser] =
+    useAsyncStorageState<User | null>(userStorageKey, null);
 
   const signInWithGoogle = useCallback(async () => {
     setIsLoadingUser(true);
@@ -80,15 +64,12 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       const data = await response.json();
 
-      const user: User = {
+      setUser({
         id: data.id,
         email: data.email,
         name: data.name,
         image: data.picture,
-      };
-
-      setUser(user);
-      await AsyncStorage.setItem(userStorageKey, JSON.stringify(user));
+      });
     }
 
     setIsLoadingUser(false);
@@ -108,15 +89,12 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       const { givenName, familyName } = credential.fullName || {};
       const name = `${givenName ?? "John"} ${familyName ?? "Doe"}`;
 
-      const user: User = {
+      setUser({
         id: credential.user,
         email: credential.email!,
         name,
         image: `https://ui-avatars.com/api/?name=${name}&size=48`,
-      };
-
-      setUser(user);
-      await AsyncStorage.setItem(userStorageKey, JSON.stringify(user));
+      });
     }
 
     setIsLoadingUser(false);

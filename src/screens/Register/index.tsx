@@ -1,5 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from "react-native";
@@ -12,10 +11,9 @@ import {
   TransactionType,
   TransactionTypeButton,
 } from "../../components/Form/TransactionTypeButton";
-import { useAuthContext } from "../../contexts/AuthContext";
+import { useTransactionsContext } from "../../contexts/TransactionsContext";
 import { useBottomTabNavigation } from "../../hooks/useBottomTabNavigation";
 import { categories } from "../../utils/categories";
-import { transactionsStorageKey } from "../../utils/constants";
 import { CategorySelect } from "../CategorySelect";
 import {
   Container,
@@ -46,7 +44,7 @@ const registerTransactionSchema = yup.object({
 });
 
 export const Register: React.FC = () => {
-  const { user } = useAuthContext();
+  const { addTransaction } = useTransactionsContext();
   const { navigate } = useBottomTabNavigation();
   const {
     control,
@@ -62,7 +60,7 @@ export const Register: React.FC = () => {
   const [transactionType, setTransactionType] =
     useState<TransactionType | null>(null);
 
-  async function handleRegister(values: RegisterFormData) {
+  function handleRegister(values: RegisterFormData) {
     if (!transactionType) {
       return Alert.alert("Erro", "Selecione o tipo da transação");
     }
@@ -71,44 +69,19 @@ export const Register: React.FC = () => {
       return Alert.alert("Erro", "Selecione uma categoria");
     }
 
-    const storageKey = `${transactionsStorageKey}_user:${user!.id}`;
+    addTransaction({
+      ...values,
+      id: String(uuid.v4()),
+      type: transactionType,
+      categorySlug: category.slug,
+      date: new Date().toISOString(),
+    });
 
-    try {
-      const newTransaction = {
-        ...values,
-        id: String(uuid.v4()),
-        type: transactionType,
-        categorySlug: category.slug,
-        date: new Date().toISOString(),
-      };
+    reset();
+    setCategory(null);
+    setTransactionType(null);
 
-      const existingTransactions = await AsyncStorage.getItem(storageKey);
-      const transactions = existingTransactions
-        ? JSON.parse(existingTransactions)
-        : [];
-
-      await AsyncStorage.setItem(
-        storageKey,
-        JSON.stringify([...transactions, newTransaction]),
-      );
-
-      reset();
-      setCategory(null);
-      setTransactionType(null);
-
-      navigate("Listagem");
-    } catch (error) {
-      if (
-        error instanceof TypeError &&
-        error.message.toLowerCase().includes("invalid attempt to spread")
-      ) {
-        await AsyncStorage.removeItem(storageKey).catch(console.log);
-      } else {
-        console.log(error);
-      }
-
-      Alert.alert("Não foi possível salvar");
-    }
+    navigate("Listagem");
   }
 
   function handleCategorySelectButtonPress() {

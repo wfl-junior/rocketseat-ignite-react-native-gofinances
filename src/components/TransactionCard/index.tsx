@@ -1,8 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert, View } from "react-native";
-import { useAuthContext } from "../../contexts/AuthContext";
-import { TransactionInStorage } from "../../screens/Dashboard";
-import { transactionsStorageKey } from "../../utils/constants";
+import { useTransactionsContext } from "../../contexts/TransactionsContext";
 import {
   Amount,
   Category,
@@ -23,7 +20,7 @@ interface Category {
 
 export type TransactionCardType = "positive" | "negative";
 
-export interface TransactionCardProps {
+export interface Transaction {
   id: string;
   type: TransactionCardType;
   title: string;
@@ -32,7 +29,7 @@ export interface TransactionCardProps {
   date: string;
 }
 
-export const TransactionCard: React.FC<TransactionCardProps> = ({
+export const TransactionCard: React.FC<Transaction> = ({
   id,
   type,
   title,
@@ -40,7 +37,7 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
   category,
   date,
 }) => {
-  const { user } = useAuthContext();
+  const { deleteTransaction } = useTransactionsContext();
 
   async function handleDeleteTransaction() {
     Alert.alert(
@@ -50,23 +47,7 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
         { text: "Não" },
         {
           text: "Sim",
-          onPress: async () => {
-            const storageKey = `${transactionsStorageKey}_user:${user!.id}`;
-            const data = await AsyncStorage.getItem(storageKey);
-
-            if (data) {
-              const transactions: TransactionInStorage[] = JSON.parse(data);
-
-              const newTransactions = transactions.filter(
-                transaction => transaction.id !== id,
-              );
-
-              await AsyncStorage.setItem(
-                storageKey,
-                JSON.stringify(newTransactions),
-              );
-            }
-          },
+          onPress: () => deleteTransaction(id),
         },
       ],
     );

@@ -12,6 +12,7 @@ import { StatusBar } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
+import { LoadingScreen } from "./components/LoadingScreen";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { theme } from "./global/styles/theme";
 import { Routes } from "./routes";
@@ -53,7 +54,11 @@ export const App: React.FC = () => {
   }, [appIsReady]);
 
   if (!appIsReady) {
-    return null;
+    return (
+      <ThemeProvider theme={theme}>
+        <LoadingScreen />
+      </ThemeProvider>
+    );
   }
 
   return (
