@@ -43,7 +43,7 @@ export const Container = styled.View<ContainerProps>`
   }}
 `;
 
-export const Button = styled(RectButton as any)`
+export const Button = styled(RectButton)`
   width: 100%;
   flex-direction: row;
   align-items: center;
@@ -51,12 +51,12 @@ export const Button = styled(RectButton as any)`
   padding: ${RFValue(16)}px;
 `;
 
-export const Icon = styled(Feather as any)<TypeProps>`
+export const Icon = styled(Feather)<TypeProps>`
   font-size: ${RFValue(24)}px;
   margin-right: ${RFValue(12)}px;
 
   color: ${({ type, theme }) => {
-    if (type === "down") {
+    if (type === "negative") {
       return theme.colors.attention;
     }
 

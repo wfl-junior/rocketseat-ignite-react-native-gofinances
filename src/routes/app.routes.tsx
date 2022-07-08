@@ -19,7 +19,6 @@ const { Navigator, Screen } =
 
 export const AppRoutes: React.FC = () => (
   <TransactionsContextProvider>
-    {/* @ts-ignore */}
     <Navigator
       screenOptions={{
         headerShown: false,
@@ -37,7 +36,6 @@ export const AppRoutes: React.FC = () => (
         component={Dashboard}
         options={{
           tabBarIcon: ({ size, color }) => (
-            // @ts-ignore
             <MaterialIcons
               name="format-list-bulleted"
               size={size}
@@ -52,7 +50,6 @@ export const AppRoutes: React.FC = () => (
         component={Register}
         options={{
           tabBarIcon: ({ size, color }) => (
-            // @ts-ignore
             <MaterialIcons name="attach-money" size={size} color={color} />
           ),
         }}
@@ -63,7 +60,6 @@ export const AppRoutes: React.FC = () => (
         component={Summary}
         options={{
           tabBarIcon: ({ size, color }) => (
-            // @ts-ignore
             <MaterialIcons
               name="pie-chart-outlined"
               size={size}

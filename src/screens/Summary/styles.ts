@@ -36,9 +36,9 @@ export const MonthSelect = styled.View`
   margin-top: ${RFValue(24)}px;
 `;
 
-export const MonthSelectButton = styled(BorderlessButton as any)``;
+export const MonthSelectButton = styled(BorderlessButton)``;
 
-export const MonthSelectIcon = styled(Feather as any)`
+export const MonthSelectIcon = styled(Feather)`
   font-size: ${RFValue(24)}px;
 `;
 

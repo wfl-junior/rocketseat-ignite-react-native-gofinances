@@ -142,7 +142,6 @@ export const Summary: React.FC = () => {
         </MonthSelect>
 
         <ChartContainer>
-          {/* @ts-ignore */}
           <VictoryPie
             data={categoriesData}
             colorScale={categoriesData.map(category => category.color)}

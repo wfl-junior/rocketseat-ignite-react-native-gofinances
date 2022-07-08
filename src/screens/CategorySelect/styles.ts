@@ -30,7 +30,7 @@ interface CategoryProps {
   isActive: boolean;
 }
 
-export const Category = styled(RectButton as any)<CategoryProps>`
+export const Category = styled(RectButton)<CategoryProps>`
   width: 100%;
   padding: ${RFValue(16)}px;
   flex-direction: row;
@@ -45,7 +45,7 @@ export const Category = styled(RectButton as any)<CategoryProps>`
   }};
 `;
 
-export const Icon = styled(Feather as any)`
+export const Icon = styled(Feather)`
   font-size: ${RFValue(20)}px;
   margin-right: ${RFValue(16)}px;
 `;

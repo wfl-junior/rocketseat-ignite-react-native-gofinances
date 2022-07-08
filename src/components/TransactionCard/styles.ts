@@ -41,7 +41,7 @@ export const Amount = styled.Text<TypeProps>`
   }};
 `;
 
-export const TrashButton = styled(BorderlessButton as any)`
+export const TrashButton = styled(BorderlessButton)`
   width: ${RFValue(24)}px;
   height: ${RFValue(24)}px;
   align-items: center;
@@ -60,7 +60,7 @@ export const Category = styled.View`
   align-items: center;
 `;
 
-export const Icon = styled(Feather as any)`
+export const Icon = styled(Feather)`
   color: ${({ theme }) => theme.colors.text};
   font-size: ${RFValue(20)}px;
 `;

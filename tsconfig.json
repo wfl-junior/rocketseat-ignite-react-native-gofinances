@@ -1,10 +1,20 @@
 {
+  "display": "Expo",
   "compilerOptions": {
+    "esModuleInterop": true,
+    "jsx": "react-native",
+    "lib": ["DOM", "ESNext"],
+    "moduleResolution": "node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
     "strict": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "extends": "expo/tsconfig.base"
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

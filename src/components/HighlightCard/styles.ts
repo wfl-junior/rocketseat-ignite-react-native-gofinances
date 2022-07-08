@@ -44,7 +44,7 @@ interface IconProps extends TypeProps {
   name: string;
 }
 
-export const Icon = styled(Feather as any)<IconProps>`
+export const Icon = styled(Feather)<IconProps>`
   font-size: ${RFValue(40)}px;
   color: ${({ type, theme }) => {
     if (type === "up") {
