@@ -15,6 +15,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { VictoryPie } from "victory-native";
 import { HistoryCard } from "../../components/HistoryCard";
 import { LoadingScreen } from "../../components/LoadingScreen";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { theme } from "../../global/styles/theme";
 import { categories } from "../../utils/categories";
 import {
@@ -56,6 +57,7 @@ function formatSelectedDate(date: Date) {
 }
 
 export const Summary: React.FC = () => {
+  const { user } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
   const [categoriesData, setCategoriesData] = useState<CategoryData[]>([]);
   const bottomTabBarHeight = useBottomTabBarHeight();
@@ -69,7 +71,7 @@ export const Summary: React.FC = () => {
   });
 
   const fetchTransactions = useCallback(() => {
-    AsyncStorage.getItem(transactionsStorageKey)
+    AsyncStorage.getItem(`${transactionsStorageKey}_user:${user!.id}`)
       .then(async data => {
         if (data) {
           const transactions: TransactionInStorage[] = JSON.parse(data);

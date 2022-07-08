@@ -12,6 +12,7 @@ import {
   TransactionType,
   TransactionTypeButton,
 } from "../../components/Form/TransactionTypeButton";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { useBottomTabNavigation } from "../../hooks/useBottomTabNavigation";
 import { categories } from "../../utils/categories";
 import { transactionsStorageKey } from "../../utils/constants";
@@ -45,6 +46,7 @@ const registerTransactionSchema = yup.object({
 });
 
 export const Register: React.FC = () => {
+  const { user } = useAuthContext();
   const { navigate } = useBottomTabNavigation();
   const {
     control,
@@ -69,6 +71,8 @@ export const Register: React.FC = () => {
       return Alert.alert("Erro", "Selecione uma categoria");
     }
 
+    const storageKey = `${transactionsStorageKey}_user:${user!.id}`;
+
     try {
       const newTransaction = {
         ...values,
@@ -78,15 +82,13 @@ export const Register: React.FC = () => {
         date: new Date().toISOString(),
       };
 
-      const existingTransactions = await AsyncStorage.getItem(
-        transactionsStorageKey,
-      );
+      const existingTransactions = await AsyncStorage.getItem(storageKey);
       const transactions = existingTransactions
         ? JSON.parse(existingTransactions)
         : [];
 
       await AsyncStorage.setItem(
-        transactionsStorageKey,
+        storageKey,
         JSON.stringify([...transactions, newTransaction]),
       );
 
@@ -100,9 +102,7 @@ export const Register: React.FC = () => {
         error instanceof TypeError &&
         error.message.toLowerCase().includes("invalid attempt to spread")
       ) {
-        await AsyncStorage.removeItem(transactionsStorageKey).catch(
-          console.log,
-        );
+        await AsyncStorage.removeItem(storageKey).catch(console.log);
       } else {
         console.log(error);
       }

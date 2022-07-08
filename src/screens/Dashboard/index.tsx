@@ -72,7 +72,7 @@ export const Dashboard: React.FC = () => {
   const { user, signOut } = useAuthContext();
 
   const fetchTransactions = useCallback(() => {
-    AsyncStorage.getItem(transactionsStorageKey)
+    AsyncStorage.getItem(`${transactionsStorageKey}_user:${user!.id}`)
       .then(async data => {
         if (data) {
           const transactions: TransactionInStorage[] = JSON.parse(data);
