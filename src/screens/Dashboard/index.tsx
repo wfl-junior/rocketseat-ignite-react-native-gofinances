@@ -34,9 +34,7 @@ import {
   UserWrapper,
 } from "./styles";
 
-interface Transaction extends TransactionCardProps {
-  id: string;
-}
+interface Transaction extends TransactionCardProps {}
 
 export type TransactionInStorage = Omit<Transaction, "category"> & {
   categorySlug: string;

@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import { BorderlessButton } from "react-native-gesture-handler";
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 import { TransactionCardType } from ".";
@@ -12,6 +13,13 @@ export const Container = styled.View`
   border-radius: 5px;
   padding: ${RFValue(17)}px ${RFValue(24)}px;
   margin-bottom: ${RFValue(16)}px;
+`;
+
+export const Header = styled.View`
+  width: 100%;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
 `;
 
 export const Title = styled.Text`
@@ -31,6 +39,13 @@ export const Amount = styled.Text<TypeProps>`
 
     return theme.colors.success;
   }};
+`;
+
+export const TrashButton = styled(BorderlessButton as any)`
+  width: ${RFValue(24)}px;
+  height: ${RFValue(24)}px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Footer = styled.View`
