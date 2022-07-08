@@ -23,9 +23,10 @@ interface User {
 interface AuthContextData {
   user: User | null;
   isLoggedIn: boolean;
-  isUserLoading: boolean;
+  isLoadingUser: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -47,7 +48,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(true);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   useEffect(() => {
     AsyncStorage.getItem(userStorageKey)
@@ -57,10 +58,12 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         }
       })
       .catch(console.log)
-      .finally(() => setIsUserLoading(false));
+      .finally(() => setIsLoadingUser(false));
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
+    setIsLoadingUser(true);
+
     const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
     const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
     const RESPONSE_TYPE = "token";
@@ -87,9 +90,13 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       setUser(user);
       await AsyncStorage.setItem(userStorageKey, JSON.stringify(user));
     }
+
+    setIsLoadingUser(false);
   }, []);
 
   const signInWithApple = useCallback(async () => {
+    setIsLoadingUser(true);
+
     const credential = await signInAsync({
       requestedScopes: [
         AppleAuthenticationScope.EMAIL,
@@ -98,15 +105,26 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     });
 
     if (credential) {
+      const { givenName, familyName } = credential.fullName || {};
+      const name = `${givenName ?? "John"} ${familyName ?? "Doe"}`;
+
       const user: User = {
         id: credential.user,
         email: credential.email!,
-        name: credential.fullName?.givenName!,
+        name,
+        image: `https://ui-avatars.com/api/?name=${name}&size=48`,
       };
 
       setUser(user);
       await AsyncStorage.setItem(userStorageKey, JSON.stringify(user));
     }
+
+    setIsLoadingUser(false);
+  }, []);
+
+  const signOut = useCallback(async () => {
+    setUser(null);
+    await AsyncStorage.removeItem(userStorageKey);
   }, []);
 
   return (
@@ -114,9 +132,10 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       value={{
         user,
         isLoggedIn: !!user,
-        isUserLoading,
+        isLoadingUser,
         signInWithGoogle,
         signInWithApple,
+        signOut,
       }}
     >
       {children}

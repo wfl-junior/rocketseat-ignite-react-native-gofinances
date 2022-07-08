@@ -8,6 +8,7 @@ import {
   TransactionCard,
   TransactionCardProps,
 } from "../../components/TransactionCard";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { categories } from "../../utils/categories";
 import {
   defaultErrorMessage,
@@ -68,6 +69,7 @@ export const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [highlightData, setHighlightData] = useState(initialHighlightData);
+  const { user, signOut } = useAuthContext();
 
   const fetchTransactions = useCallback(() => {
     AsyncStorage.getItem(transactionsStorageKey)
@@ -163,15 +165,15 @@ export const Dashboard: React.FC = () => {
       <Header>
         <UserWrapper>
           <UserInfo>
-            <Photo source={{ uri: "https://github.com/wfl-junior.png" }} />
+            <Photo source={{ uri: user!.image }} />
 
             <User>
               <UserGreeting>Olá,</UserGreeting>
-              <UserName>Wallace Júnior</UserName>
+              <UserName>{user!.name}</UserName>
             </User>
           </UserInfo>
 
-          <LogoutButton onPress={() => {}}>
+          <LogoutButton onPress={signOut}>
             <Icon name="power" />
           </LogoutButton>
         </UserWrapper>
