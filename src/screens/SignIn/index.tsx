@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import AppleIcon from "../../assets/apple-icon.svg";
 import GoogleIcon from "../../assets/google-icon.svg";
@@ -58,11 +58,13 @@ export const SignIn: React.FC = () => {
             onPress={handleSignInWithGoogle}
           />
 
-          <SignInButton
-            title="Entrar com Apple"
-            svg={AppleIcon}
-            onPress={handleSignInWithApple}
-          />
+          {Platform.OS === "ios" && (
+            <SignInButton
+              title="Entrar com Apple"
+              svg={AppleIcon}
+              onPress={handleSignInWithApple}
+            />
+          )}
         </ButtonsContainer>
       </Footer>
     </Container>
