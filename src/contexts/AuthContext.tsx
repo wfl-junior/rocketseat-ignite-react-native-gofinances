@@ -61,15 +61,11 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     if (type === "success") {
       const googleUser = await fetchGoogleUser(params.access_token);
 
-      setUser(() => {
-        console.log("setUser", { type });
-
-        return {
-          id: googleUser.id,
-          email: googleUser.email,
-          name: googleUser.name,
-          image: googleUser.picture,
-        };
+      setUser({
+        id: googleUser.id,
+        email: googleUser.email,
+        name: googleUser.name,
+        image: googleUser.picture,
       });
     }
 
