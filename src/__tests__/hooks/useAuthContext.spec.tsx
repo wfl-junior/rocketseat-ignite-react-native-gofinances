@@ -12,6 +12,9 @@ import { fetchGoogleUser } from "../../utils/fetchGoogleUser";
 jest.mock("expo-auth-session");
 jest.mock("../../utils/fetchGoogleUser");
 
+const mockedStartAsync = mocked(startAsync);
+const mockedFetchGoogleUser = mocked(fetchGoogleUser);
+
 describe("useAuthContext hook", () => {
   beforeEach(async () => {
     // para impedir que local storage mantenha user entre os testes
@@ -19,9 +22,6 @@ describe("useAuthContext hook", () => {
   });
 
   it("should be able to sign in with Google", async () => {
-    const mockedStartAsync = mocked(startAsync);
-    const mockedFetchGoogleUser = mocked(fetchGoogleUser);
-
     mockedStartAsync.mockReturnValueOnce(
       Promise.resolve({
         type: "success",
@@ -50,8 +50,6 @@ describe("useAuthContext hook", () => {
   });
 
   it("should not be able to sign in with Google if user cancels authentication", async () => {
-    const mockedStartAsync = mocked(startAsync);
-
     mockedStartAsync.mockReturnValueOnce(
       Promise.resolve({
         type: "cancel",
@@ -63,6 +61,38 @@ describe("useAuthContext hook", () => {
     });
 
     await act(result.current.signInWithGoogle);
+
+    expect(result.current.user).toBeNull();
+  });
+
+  it("should sign out", async () => {
+    mockedStartAsync.mockReturnValueOnce(
+      Promise.resolve({
+        type: "success",
+        params: {
+          access_token: "fake-access-token",
+        },
+      } as any),
+    );
+
+    mockedFetchGoogleUser.mockReturnValueOnce(
+      Promise.resolve({
+        id: "userInfo.id",
+        email: "userInfo.email",
+        name: "userInfo.name",
+        picture: "userInfo.picture",
+      }),
+    );
+
+    const { result } = renderHook(useAuthContext, {
+      wrapper: AuthContextProvider,
+    });
+
+    await act(result.current.signInWithGoogle);
+
+    expect(result.current.user).not.toBeNull();
+
+    await act(result.current.signOut);
 
     expect(result.current.user).toBeNull();
   });
