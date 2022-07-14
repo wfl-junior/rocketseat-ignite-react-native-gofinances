@@ -1,7 +1,8 @@
 module.exports = {
   preset: "jest-expo",
-  testRegex: ["(/src/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$"],
+  testMatch: ["**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)"],
   testPathIgnorePatterns: ["/node_modules", "/android", "/ios"],
+  setupFiles: ["./src/__tests__/setup.ts"],
   setupFilesAfterEnv: [
     "@testing-library/jest-native/extend-expect",
     "jest-styled-components",
