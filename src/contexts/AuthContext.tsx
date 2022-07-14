@@ -7,6 +7,7 @@ import { startAsync } from "expo-auth-session";
 import { createContext, useCallback, useContext } from "react";
 import { useAsyncStorageState } from "../hooks/useAsyncStorageState";
 import { userStorageKey } from "../utils/constants";
+import { fetchGoogleUser } from "../utils/fetchGoogleUser";
 
 interface User {
   id: string;
@@ -58,17 +59,17 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     })) as SignInWithGoogleResponse;
 
     if (type === "success") {
-      const response = await fetch(
-        `https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${params.access_token}`,
-      );
+      const googleUser = await fetchGoogleUser(params.access_token);
 
-      const data = await response.json();
+      setUser(() => {
+        console.log("setUser", { type });
 
-      setUser({
-        id: data.id,
-        email: data.email,
-        name: data.name,
-        image: data.picture,
+        return {
+          id: googleUser.id,
+          email: googleUser.email,
+          name: googleUser.name,
+          image: googleUser.picture,
+        };
       });
     }
 
