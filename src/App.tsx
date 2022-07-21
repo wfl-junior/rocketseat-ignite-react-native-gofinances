@@ -58,6 +58,12 @@ export const App: React.FC = () => {
   if (!appIsReady) {
     return (
       <ThemeProvider theme={theme}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
+
         <LoadingScreen />
       </ThemeProvider>
     );
@@ -66,9 +72,9 @@ export const App: React.FC = () => {
   return (
     <Fragment>
       <StatusBar
+        barStyle="light-content"
         backgroundColor="transparent"
         translucent
-        barStyle="light-content"
       />
 
       <GestureHandlerRootView

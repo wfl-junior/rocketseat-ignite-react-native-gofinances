@@ -1,12 +1,14 @@
 {
   "expo": {
     "name": "gofinances",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/icon.png",
     "slug": "gofinances",
     "scheme": "gofinances",
     "owner": "wfl-junior",
     "version": "1.0.0",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.gofinances",
@@ -15,6 +17,18 @@
     "ios": {
       "bundleIdentifier": "com.gofinances",
       "buildNumber": "1.0.0"
-    }
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#5636D3"
+    },
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#5636D3",
+      "translucent": true
+    },
+    "description": "Aplicativo para gerenciar finanças.",
+    "githubUrl": "https://github.com/wfl-junior/rocketseat-ignite-react-native-gofinances"
   }
 }
